@@ -166,6 +166,9 @@ white = {eol}|[ \t]
 /* whitespace */
 {white}+ { /* ignore whitespace */ }
 
+/* comments */
+\/\*([^*] | \*+[^/])* \*\/ { /* ignore */ }
+
 /* lexical errors (last so other matches take precedence) */
 . {
     System.err.printf(
