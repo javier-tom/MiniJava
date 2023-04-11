@@ -16,14 +16,20 @@ import java_cup.runtime.*;
 /* reserved words */
 terminal DISPLAY;
 
+/* keywords */
+terminal CLASS, PUBLIC, STATIC, VOID, MAIN, NEW, IF, ELSE, TRUE, FALSE, WHILE;
+terminal SOUT, THIS, EXTENDS, LENGTH, STRING_TYPE, INT, BOOLEAN;
+terminal RETURN;
+
 /* operators */
-terminal PLUS, BECOMES;
+terminal PLUS, BECOMES, MINUS, TIMES, NOT, AND, LESS_THAN, DOT;
 
 /* delimiters */
-terminal LPAREN, RPAREN, SEMICOLON;
+terminal LPAREN, RPAREN, SEMICOLON, LSQUARE, RSQUARE, LCURLY, RCURLY, COMMA;
 
 /* identifiers */
 terminal String IDENTIFIER;
+terminal String INTEGER_LITERAL;
 
 
 /* Nonterminals (constructed by parser): */
