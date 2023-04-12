@@ -10,18 +10,18 @@ import java.util.Scanner;
 public class MiniJava {
 
     public static void main (String[] args) {
-        if (args.length != 3) {
+        if (args.length != 2) {
             System.out.println("USAGE: MiniJava -S [filename]" );
             return;
         }
 
-        if (args[1] != "-S") {
+        if (!args[0].equals("-S")) {
             System.out.println("USAGE: MiniJava -S [filename]");
             return;
         }
 
         try {
-            scanner scanner = new scanner(new FileReader(args[2]));
+            scanner scanner = new scanner(new FileReader(args[1]));
             Symbol t = scanner.next_token();
 
             while (t.sym != sym.EOF) {

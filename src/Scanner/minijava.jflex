@@ -94,6 +94,8 @@ import Parser.sym;
      ComplexSymbol cs = (ComplexSymbol)s; 
      if (cs.sym == sym.IDENTIFIER) {
        return "ID(" + (String)cs.value + ")";
+     } else if (cs.sym == sym.INTEGER_LITERAL) {
+       return "INTEGER_LITERAL(" + (String)cs.value + ")";
      } else if (cs.sym == sym.error) {
        return "<UNEXPECTED(" + (String)cs.value + ")>";
      } else {
