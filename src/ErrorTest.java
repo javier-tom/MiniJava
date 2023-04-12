@@ -25,18 +25,13 @@ public class ErrorTest {
         // SOUT statement
         System.out.println(i);
 
-        // Strings unsupported concatenation
-        String s = "i + k = " + i;
-
-        System.out.println(s);
-
         /* this is a multi line comment inside a program!!!
         Don't expect text!
          */
 
         // missing LPAREN in statement
-        if ((i < j) && i > k)) {
-            System.out.println("Use of AND");
+        if ((i < j) && i < k)) {
+            System.out.println(i);
         }
     }
 

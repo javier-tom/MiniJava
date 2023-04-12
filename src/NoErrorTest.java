@@ -23,18 +23,13 @@ public class NoErrorTest {
         // SOUT statement
         System.out.println(i);
 
-        // Strings
-        String s = "i + k = 17";
-
-        System.out.println(s);
-
         /* this is a multi line comment inside a program!!!
         Don't expect text!
          */
 
         // AND statement with LPAREN and RPAREN
-        if ((i < j) && (i > k)) {
-            System.out.println("Use of AND");
+        if ((i < j) && (i < k)) {
+            System.out.println(i);
         }
     }
 
