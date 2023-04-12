@@ -169,6 +169,7 @@ white = {eol}|[ \t]
 {white}+ { /* ignore whitespace */ }
 
 /* comments */
+\/\/ [^{eol}]* {eol} { /* ignore */ }
 \/\*([^*] | \*+[^/])* \*\/ { /* ignore */ }
 
 /* lexical errors (last so other matches take precedence) */

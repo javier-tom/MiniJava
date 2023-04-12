@@ -29,7 +29,12 @@ public class MiniJava {
             Symbol t = scanner.next_token();
 
             while (t.sym != sym.EOF) {
-                System.out.print(scanner.symbolToString(t) + " ");
+                if (t.sym == sym.error) {
+                    System.err.println(scanner.symbolToString(t));
+                } else {
+                    System.out.print(scanner.symbolToString(t) + " ");
+                }
+
                 t = scanner.next_token();
             }
         } catch (Exception e) {

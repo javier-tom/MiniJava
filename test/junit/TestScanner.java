@@ -28,12 +28,13 @@ public class TestScanner {
         }
     }
 
-    /*
-        A single test case for simple arithmetic, showing how to use the
-        helper function above (and the given folder organization).
-    */
     @Test
-    public void testSimpleArithmetic() {
+    public void testSimple() {
         runScannerTestCase("Simple");
+    }
+
+    @Test
+    public void Comments() {
+        runScannerTestCase("Comments");
     }
 }
