@@ -24,12 +24,16 @@ public class MiniJava {
 
         // System.exit doesn't work right in a try, so workaround
         int exitCode = 0;
+        boolean valid = true;
         try {
             scanner scanner = new scanner(new FileReader(args[1]));
             Symbol t = scanner.next_token();
 
             while (t.sym != sym.EOF) {
                 System.out.print(scanner.symbolToString(t) + " ");
+                if (t.sym == sym.error) {
+                    valid = false;
+                }
                 t = scanner.next_token();
             }
         } catch (Exception e) {
@@ -37,7 +41,7 @@ public class MiniJava {
             e.printStackTrace();
             exitCode = 1;
         }
-
+        if (!valid) exitCode = 1;
         System.exit(exitCode);
     }
 }
