@@ -68,4 +68,23 @@ public class TestScanner {
     public void Errors() {
         runScannerTestCaseWithErr("Errors");
     }
+
+    @Test
+    public void Delimiters() {
+        runScannerTestCase("Delimiters");
+    }
+
+    @Test
+    public void Keywords() {
+        runScannerTestCase("Keywords");
+    }
+
+    @Test
+    public void Loops() {
+        runScannerTestCase("Loops");
+    }
+    @Test
+    public void Operators() {
+        runScannerTestCase("Operators");
+    }
 }
