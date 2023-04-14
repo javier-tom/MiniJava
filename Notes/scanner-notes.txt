@@ -1,1 +1,6 @@
-David and Javier worked on the implementation of minijava.jflex and minijava.cup together. One member would be behind the keyboard while the other provided a second look to make sure things were implemented correctly. We divided writing up the test samples, David wrote Comments, Simple, Methods, Integer Literals, and Error (.java/.expected), and Javier wrote Delimiters, Keywords, Loops, and Operators (.java/.expected).
+David and Javier worked on the implementation of minijava.jflex and minijava.cup
+together. One member would be behind the keyboard while the other provided a
+second look to make sure things were implemented correctly. We divided writing
+up the test samples, David wrote Comments, Simple, Methods, Integer Literals,
+and Error (.java/.expected), and Javier wrote Delimiters, Keywords, Loops, and
+Operators (.java/.expected).
