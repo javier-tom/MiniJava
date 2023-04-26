@@ -34,13 +34,14 @@ terminal String INTEGER_LITERAL;
 
 /* Nonterminals (constructed by parser): */
 
-nonterminal List<Statement> Program;
-nonterminal Statement Statement;
-nonterminal Assign AssignStatement;
-nonterminal Display DisplayStatement;
+nonterminal Program Goal;
+nonterminal MainClass MainClass;
+nonterminal ClassDecl ClassDeclaration;
+nonterminal MethDecl MethodDeclaration;
+nonterminal Type Type;
 nonterminal Exp Expression;
-nonterminal Identifier Identifier;
-
+nonterminal True True;
+nonterminal False False;
 
 /* Precedence declarations: */
 
@@ -65,38 +66,11 @@ Expression ::= Expression (AND | LESS_THAN | PLUS | MINUS | TIMES) Expression |
     Expression LSQUARE Expression RSQUARE |
     Expression DOT LENGTH |
     Expression DOT IDENTIFIER LPAREN (Expression (COMMA Expression)*)? RPAREN |
-    INTEGER_LITERAL | TRUE | FALSE | IDENTIFIER | THIS |
+    INTEGER_LITERAL | True | False | IDENTIFIER | THIS |
     NEW INT LSQUARE Expression RSQUARE |
     NEW IDENTIFIER LPAREN RPAREN |
     NOT Expression |
     LPAREN Expression RPAREN;
 
-/*
-Program ::= Statement:s
-            {: List<Statement> p = new LinkedList<Statement>();
-               p.add(s);
-               RESULT = p; :}
-        | Program:p Statement:s
-            {: p.add(s); RESULT = p; :};
-
-Statement   ::= AssignStatement:s
-                {: RESULT = s; :}
-            | DisplayStatement:s
-                {: RESULT = s; :};
-
-AssignStatement ::= Identifier:id BECOMES Expression:expr SEMICOLON
-                    {: RESULT = new Assign(id, expr, idxleft); :};
-
-Identifier  ::= IDENTIFIER:id
-                {: RESULT = new Identifier(id, idxleft); :};
-
-DisplayStatement ::= DISPLAY:d Expression:expr SEMICOLON
-                     {: RESULT = new Display(expr, dxleft); :};
-
-Expression    ::= IDENTIFIER:name
-            {: RESULT = new IdentifierExp(name, namexleft); :}
-        | Expression:arg1 PLUS Expression:arg2
-            {: RESULT = new Plus(arg1, arg2, arg1xleft); :}
-        | LPAREN Expression:expr RPAREN
-            {: RESULT = expr; :};
-*/
+True ::= TRUE {: RESULT = new True(); :};
+False ::= FALSE {: RESULT = new False(); :};
