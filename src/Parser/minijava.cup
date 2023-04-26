@@ -49,6 +49,29 @@ precedence left PLUS;
 
 /* Productions: */
 
+Goal ::= MainClass:m;
+MainClass ::= CLASS IDENTIFIER LCURLY PUBLIC STATIC VOID MAIN LPAREN STRING LSQUARE RSQUARE IDENTIFIER RPAREN LCURLY STATEMENT RCURLY RCURLY;
+ClassDeclaration ::= CLASS IDENTIFIER (EXTENDS IDENTIFIER)? LCURLY (VarDeclaration)* (MethodDeclaration)* RCURLY;
+MethodDeclaration ::= PUBLIC Type IDENTIFIER LPAREN (Type IDENTIFIER (COMMA Type IDENTIFIER)*)? RPAREN LCURLY (VarDeclaration)*
+    (Statement)* RETURN Expression SEMICOLON RCURLY;
+Type ::= INT LSQUARE RSQUARE | BOOLEAN | INT | IDENTIFIER;
+Statement ::= LCURLY (Statement)* RCURLY |
+    IF LPAREN Expression RPAREN Statement ELSE Statement |
+    WHILE LPAREN Expression RPAREN Statement |
+    SOUT LPAREN Expression RPAREN SEMICOLON |
+    IDENTIFIER BECOMES Expression SEMICOLON |
+    IDENTIFIER LSQUARE Expression RSQUARE SEMICOLON;
+Expression ::= Expression (AND | LESS_THAN | PLUS | MINUS | TIMES) Expression |
+    Expression LSQUARE Expression RSQUARE |
+    Expression DOT LENGTH |
+    Expression DOT IDENTIFIER LPAREN (Expression (COMMA Expression)*)? RPAREN |
+    INTEGER_LITERAL | TRUE | FALSE | IDENTIFIER | THIS |
+    NEW INT LSQUARE Expression RSQUARE |
+    NEW IDENTIFIER LPAREN RPAREN |
+    NOT Expression |
+    LPAREN Expression RPAREN;
+
+/*
 Program ::= Statement:s
             {: List<Statement> p = new LinkedList<Statement>();
                p.add(s);
@@ -76,3 +99,4 @@ Expression    ::= IDENTIFIER:name
             {: RESULT = new Plus(arg1, arg2, arg1xleft); :}
         | LPAREN Expression:expr RPAREN
             {: RESULT = expr; :};
+*/
