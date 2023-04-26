@@ -38,10 +38,10 @@ nonterminal Program Goal;
 nonterminal MainClass MainClass;
 nonterminal ClassDecl ClassDeclaration;
 nonterminal MethDecl MethodDeclaration;
+nonterminal Statement Statement;
+nonterminal List<Statement> StatementList;
 nonterminal Type Type;
 nonterminal Exp Expression;
-nonterminal True True;
-nonterminal False False;
 
 /* Precedence declarations: */
 
@@ -51,14 +51,16 @@ precedence left PLUS;
 /* Productions: */
 
 Goal ::= MainClass:m;
-MainClass ::= CLASS IDENTIFIER LCURLY PUBLIC STATIC VOID MAIN LPAREN STRING LSQUARE RSQUARE IDENTIFIER RPAREN LCURLY STATEMENT RCURLY RCURLY;
+MainClass ::= CLASS IDENTIFIER LCURLY PUBLIC STATIC VOID MAIN LPAREN STRING_TYPE LSQUARE RSQUARE IDENTIFIER RPAREN LCURLY Statement RCURLY RCURLY;
 ClassDeclaration ::= CLASS IDENTIFIER (EXTENDS IDENTIFIER)? LCURLY (VarDeclaration)* (MethodDeclaration)* RCURLY;
 MethodDeclaration ::= PUBLIC Type IDENTIFIER LPAREN (Type IDENTIFIER (COMMA Type IDENTIFIER)*)? RPAREN LCURLY (VarDeclaration)*
     (Statement)* RETURN Expression SEMICOLON RCURLY;
 Type ::= INT LSQUARE RSQUARE | BOOLEAN | INT | IDENTIFIER;
-Statement ::= LCURLY (Statement)* RCURLY |
-    IF LPAREN Expression RPAREN Statement ELSE Statement |
-    WHILE LPAREN Expression RPAREN Statement |
+Statement ::= LCURLY StatementList RCURLY |
+    IF:i LPAREN Expression:e RPAREN Statement:s1 ELSE Statement:s2
+        {: RESULT = new If(e, s1, s2, ixleft); :} |
+    WHILE:w LPAREN Expression:e RPAREN Statement:s
+        {: RESULT = new While(e, s, wxleft); :} |
     SOUT LPAREN Expression RPAREN SEMICOLON |
     IDENTIFIER BECOMES Expression SEMICOLON |
     IDENTIFIER LSQUARE Expression RSQUARE SEMICOLON;
@@ -66,11 +68,12 @@ Expression ::= Expression (AND | LESS_THAN | PLUS | MINUS | TIMES) Expression |
     Expression LSQUARE Expression RSQUARE |
     Expression DOT LENGTH |
     Expression DOT IDENTIFIER LPAREN (Expression (COMMA Expression)*)? RPAREN |
-    INTEGER_LITERAL | True | False | IDENTIFIER | THIS |
+    INTEGER_LITERAL |
+    TRUE:t {: RESULT = new True(txleft); :} |
+    FALSE:f {: RESULT = new False(fxleft); :} |
+    IDENTIFIER |
+    THIS:t {: RESULT = new This(txleft); :} |
     NEW INT LSQUARE Expression RSQUARE |
     NEW IDENTIFIER LPAREN RPAREN |
     NOT Expression |
     LPAREN Expression RPAREN;
-
-True ::= TRUE {: RESULT = new True(); :};
-False ::= FALSE {: RESULT = new False(); :};
