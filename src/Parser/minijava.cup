@@ -13,9 +13,6 @@ import java_cup.runtime.*;
 
 /* Terminals (lexical tokens returned by the scanner): */
 
-/* reserved words */
-terminal DISPLAY;
-
 /* keywords */
 terminal String CLASS, PUBLIC, STATIC, VOID, MAIN, NEW, IF, ELSE, TRUE, FALSE, WHILE;
 terminal String SOUT, THIS, EXTENDS, LENGTH, STRING_TYPE;
@@ -79,29 +76,38 @@ ClassDecl ::= CLASS Identifier:id1 EXTENDS Identifier:id2 LCURLY VarDeclList:var
     | CLASS Identifier:id1 LCURLY VarDeclList:var_list MethodDeclList:methdecl_list RCURLY
     {: RESULT = new ClassDeclSimple(id1, var_list, methdecl_list, id1xleft); :};
 
-ClassDeclList ::= ClassDeclList:cd_list ClassDecl:class
-    {: cd_list.add(class);
+ClassDeclList ::= ClassDeclList:cd_list ClassDecl:c
+    {: cd_list.add(c);
        RESULT = cd_list; :}
-    | {: RESULT = new ClassDeclList(new Location(0, 0)); :};
+    | ClassDecl:c
+        {: ClassDeclList cdl = new ClassDeclList(cxleft);
+           cdl.add(c);
+           RESULT = cdl; :};
 
 MethodDecl ::= PUBLIC Type:t Identifier:id LPAREN FormalList:formal_list RPAREN LCURLY VarDeclList:var_list
     StatementList:s_list RETURN Expression:exp SEMICOLON RCURLY
     {: RESULT = new MethodDecl(t, id, formal_list, var_list, s_list, exp, txleft); :}
-    | Public Type:t Identifier:id LPAREN RPAREN LCURLY VarDeclList:var_list
+    | PUBLIC Type:t Identifier:id LPAREN RPAREN LCURLY VarDeclList:var_list
     StatementList:s_list RETURN Expression:exp SEMICOLON RCURLY
     {: RESULT = new MethodDecl(t, id, new FormalList(txleft), var_list, s_list, exp, txleft); :};
 
 MethodDeclList ::= MethodDeclList:methdecl_list MethodDecl:method
     {: methdecl_list.add(method);
        RESULT = methdecl_list; :}
-    | {: RESULT = new MethodDeclList(new Location(0,0)); :};
+    | MethodDecl:method
+        {: MethodDeclList mdl = new MethodDeclList(methodxleft);
+           mdl.add(method);
+           RESULT = mdl; :};
 
 VarDecl ::= Type:t Identifier:id SEMICOLON
     {: RESULT = new VarDecl(t, id, txleft); :};
 VarDeclList ::= VarDeclList:var_list VarDecl:var
     {: var_list.add(var);
        Result = var_list; :}
-    | {: Result = new VarDeclList(new Location(0,0)); :};
+    | VarDecl:var
+    {: VarDeclList vdl = new VarDeclList(varxleft);
+       vdl.add(var);
+       Result = new VarDeclList(new Location(0,0)); :};
 
 Formal ::= Type:t Identifier:id
     {: RESULT = new Formal(t, id, txleft); :};
