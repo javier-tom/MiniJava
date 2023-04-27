@@ -65,7 +65,8 @@ precedence left NOT;
 /* Productions: */
 
 Program ::= MainClass:mc ClassDeclList:cdl
-    {: RESULT = new Program(mc, cdl, mcxleft); :};
+    {: RESULT = new Program(mc, cdl, mcxleft); :} |
+    MainClass:mc {: RESULT = new Program (mc, new ClassDeclList(new Location(0, 0)), mcxleft); :};
 
 MainClass ::= CLASS Identifier:id1 LCURLY PUBLIC STATIC VOID MAIN LPAREN STRING_TYPE LSQUARE RSQUARE
     Identifier:id2 RPAREN LCURLY Statement:s1 RCURLY RCURLY
