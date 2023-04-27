@@ -37,9 +37,11 @@ terminal String INTEGER_LITERAL;
 nonterminal Program Goal;
 nonterminal MainClass MainClass;
 nonterminal ClassDecl ClassDeclaration;
-nonterminal ClasDeclList ClassDeclarationList;
+nonterminal ClassDeclList ClassDeclarationList;
 nonterminal MethDecl MethodDeclaration;
 nonterminal MethDeclList MethodDeclarationList;
+nonterminal Formal Formal;
+nonterminal FormalList FormalList;
 nonterminal Statement Statement;
 nonterminal StatementList StatementList;
 nonterminal VarDecl VarDeclaration;
@@ -64,9 +66,20 @@ Goal ::= MainClass:mc ClassDeclarationList:cdl
 MainClass ::= CLASS Identifier:id1 LCURLY PUBLIC STATIC VOID MAIN LPAREN STRING_TYPE LSQUARE RSQUARE
     Identifier:id2 RPAREN LCURLY Statement:s1 RCURLY RCURLY
     {: RESULT = new MainClass(id1, id2, s1, id1xleft); :};
-ClassDeclaration ::= CLASS Identifier:id1 EXTENDS Identifier:id2 LCURLY VarDeclarationList:var_list (MethodDeclaration)* RCURLY;
-MethodDeclaration ::= PUBLIC Type IDENTIFIER LPAREN (Type IDENTIFIER (COMMA Type IDENTIFIER)*)? RPAREN LCURLY (VarDeclaration)*
-    (Statement)* RETURN Expression SEMICOLON RCURLY;
+ClassDeclaration ::= CLASS Identifier:id1 EXTENDS Identifier:id2 LCURLY VarDeclList:var_list MethDeclList:methdecl_list RCURLY
+    {: RESULT = new ClassDeclExtends(id1, id2, var_list, methdecl_list, id1xleft); :}
+    | CLASS Identifier:id1 LCURLY VarDeclarationList:var_list MethodDeclList:methdecl_list RCURLY
+    {: RESULT = new ClassDeclSimple(id1, var_list, methdecl_list, id1xleft); :};
+ClassDeclarationList ::= ClassDeclList:cd_list ClassDecl:class
+    {: cd_list.add(class);
+        RESULT = cd_list; :}
+    | {: RESULT = new ClassDeclList(new Location(0, 0)); :};
+MethodDeclaration ::= PUBLIC Type:t Identifier:id LPAREN FormalList:formal_list RPAREN LCURLY VarDeclList:var_list
+    StatementList:s_list RETURN Exp:exp SEMICOLON RCURLY
+    {: RESULT = new MethodDecl(t, id, formal_list, var_list, s_list, exp, txleft); :}
+    | Public Type:t Identifier:id LPAREN RPAREN LCURLY VarDeclList:var_list
+    StatementList:s_list RETURN Exp:exp SEMICOLON RCURLY
+    {::};
 Type ::= INT LSQUARE RSQUARE | BOOLEAN | INT | IDENTIFIER;
 
 Identifier ::= IDENTIFIER:i {: RESULT = new Identifier(i); :};
