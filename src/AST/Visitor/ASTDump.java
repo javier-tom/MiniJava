@@ -47,20 +47,23 @@ public class ASTDump implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
-        System.out.print("class ");
-        n.i.accept(this);
-        System.out.println(" { ");
+        indent();
+        System.out.print("Class " + n.i);
+        lineNumber(n);
+
+        currentDepth++;
+        indent();
+        System.out.println("fields:");
+        currentDepth++;
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            System.out.print("  ");
             n.vl.get(i).accept(this);
-            if ( i+1 < n.vl.size() ) { System.out.println(); }
         }
+        currentDepth--;
+
         for ( int i = 0; i < n.ml.size(); i++ ) {
-            System.out.println();
             n.ml.get(i).accept(this);
         }
-        System.out.println();
-        System.out.println("}");
+        currentDepth--;
     }
 
     // Identifier i;
@@ -68,31 +71,33 @@ public class ASTDump implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
-        System.out.print("class ");
-        n.i.accept(this);
-        System.out.println(" extends ");
-        n.j.accept(this);
-        System.out.println(" { ");
+        indent();
+        System.out.print("Class " + n.i + " extends " + n.j);
+        lineNumber(n);
+
+        currentDepth++;
+        indent();
+        System.out.println("fields:");
+        currentDepth++;
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            System.out.print("  ");
             n.vl.get(i).accept(this);
-            if ( i+1 < n.vl.size() ) { System.out.println(); }
         }
+        currentDepth--;
+
         for ( int i = 0; i < n.ml.size(); i++ ) {
-            System.out.println();
             n.ml.get(i).accept(this);
         }
-        System.out.println();
-        System.out.println("}");
+        currentDepth--;
     }
 
     // Type t;
     // Identifier i;
     public void visit(VarDecl n) {
+        indent();
+        System.out.print("VarDecl ");
         n.t.accept(this);
-        System.out.print(" ");
-        n.i.accept(this);
-        System.out.print(";");
+        System.out.print(" " + n.i);
+        lineNumber(n);
     }
 
     // Type t;
@@ -215,118 +220,170 @@ public class ASTDump implements Visitor {
 
     // Exp e1,e2;
     public void visit(And n) {
-        System.out.print("(");
+        indent();
+        System.out.print("And");
+        lineNumber(n);
+        currentDepth++;
         n.e1.accept(this);
-        System.out.print(" && ");
         n.e2.accept(this);
-        System.out.print(")");
+        currentDepth--;
     }
 
     // Exp e1,e2;
     public void visit(LessThan n) {
-        System.out.print("(");
+        indent();
+        System.out.print("LessThan");
+        lineNumber(n);
+        currentDepth++;
         n.e1.accept(this);
-        System.out.print(" < ");
         n.e2.accept(this);
-        System.out.print(")");
+        currentDepth--;
     }
 
     // Exp e1,e2;
     public void visit(Plus n) {
-        System.out.print("(");
+        indent();
+        System.out.print("Plus");
+        lineNumber(n);
+        currentDepth++;
         n.e1.accept(this);
-        System.out.print(" + ");
         n.e2.accept(this);
-        System.out.print(")");
+        currentDepth--;
     }
 
     // Exp e1,e2;
     public void visit(Minus n) {
-        System.out.print("(");
+        indent();
+        System.out.print("Minus");
+        lineNumber(n);
+        currentDepth++;
         n.e1.accept(this);
-        System.out.print(" - ");
         n.e2.accept(this);
-        System.out.print(")");
+        currentDepth--;
     }
 
     // Exp e1,e2;
     public void visit(Times n) {
-        System.out.print("(");
+        indent();
+        System.out.print("Times");
+        lineNumber(n);
+        currentDepth++;
         n.e1.accept(this);
-        System.out.print(" * ");
         n.e2.accept(this);
-        System.out.print(")");
+        currentDepth--;
     }
 
     // Exp e1,e2;
     public void visit(ArrayLookup n) {
+        indent();
+        System.out.println("ArrayLookup");
+        lineNumber(n);
+
+        currentDepth++;
+        indent();
+        System.out.println("on:");
+        currentDepth++;
         n.e1.accept(this);
-        System.out.print("[");
+        currentDepth--;
+
+        indent();
+        System.out.println("at index:")
+        currentDepth++;
         n.e2.accept(this);
-        System.out.print("]");
+        currentDepth -= 2;
     }
 
     // Exp e;
     public void visit(ArrayLength n) {
+        indent();
+        System.out.println("ArrayLength on:");
         n.e.accept(this);
-        System.out.print(".length");
     }
 
     // Exp e;
     // Identifier i;
     // ExpList el;
     public void visit(Call n) {
+        indent();
+        System.out.print("Call " + n.i.s);
+        lineNumber(n);
+
+        currentDepth++;
+        indent();
+        System.out.println("on class:");
+        currentDepth++;
         n.e.accept(this);
-        System.out.print(".");
-        n.i.accept(this);
-        System.out.print("(");
+        currentDepth--;
+        indent();
+        System.out.println("parameters:");
+
+        currentDepth++;
         for ( int i = 0; i < n.el.size(); i++ ) {
             n.el.get(i).accept(this);
-            if ( i+1 < n.el.size() ) { System.out.print(", "); }
         }
-        System.out.print(")");
+        currentDepth -= 2;
     }
 
     // int i;
     public void visit(IntegerLiteral n) {
-        System.out.print(n.i);
+        indent();
+        System.out.print("IntegerLiteral " + n.i);
+        lineNumber(n);
     }
 
     public void visit(True n) {
-        System.out.print("true");
+        indent();
+        System.out.print("True");
+        lineNumber(n);
     }
 
     public void visit(False n) {
-        System.out.print("false");
+        indent();
+        System.out.print("False");
+        lineNumber(n);
     }
 
     // String s;
     public void visit(IdentifierExp n) {
+        indent();
         System.out.print(n.s);
+        lineNumber(n);
     }
 
     public void visit(This n) {
+        indent();
         System.out.print("this");
+        lineNumber(n);
     }
 
     // Exp e;
     public void visit(NewArray n) {
-        System.out.print("new int [");
+        indent();
+        System.out.print("NewArray");
+        lineNumber(n);
+        currentDepth++;
+        indent();
+        System.out.println("size:");
+        currentDepth++;
         n.e.accept(this);
-        System.out.print("]");
+        currentDepth -= 2;
     }
 
     // Identifier i;
     public void visit(NewObject n) {
-        System.out.print("new ");
-        System.out.print(n.i.s);
-        System.out.print("()");
+        indent();
+        System.out.print("NewObject " + n.i);
+        lineNumber(n);
     }
 
     // Exp e;
     public void visit(Not n) {
-        System.out.print("!");
+        indent();
+        System.out.print("Not");
+        lineNumber(n);
+        currentDepth++;
         n.e.accept(this);
+        currentDepth--;
     }
 
     // String s;
