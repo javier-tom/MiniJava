@@ -103,18 +103,19 @@ VarDecl ::= Type:t Identifier:id SEMICOLON
     {: RESULT = new VarDecl(t, id, txleft); :};
 VarDeclList ::= VarDeclList:var_list VarDecl:var
     {: var_list.add(var);
-       Result = var_list; :}
+       RESULT = var_list; :}
     | VarDecl:var
     {: VarDeclList vdl = new VarDeclList(varxleft);
        vdl.add(var);
-       Result = new VarDeclList(new Location(0,0)); :};
+       RESULT = vdl; :};
 
 Formal ::= Type:t Identifier:id
     {: RESULT = new Formal(t, id, txleft); :};
-FormalList ::= Formal:formal
-    {: FormalList:formal_list = new FormalList(formalxleft);
-       formal_list.add(formal);
-       Result = formal_list; :}
+
+FormalList ::= Formal:f
+    {: FormalList fl = new FormalList(fxleft);
+       fl.add(f);
+       RESULT = fl; :}
     | FormalList:formal_list COMMA Formal:formal
     {: formal_list.add(formal);
        RESULT = formal_list; :};
@@ -151,7 +152,7 @@ Statement ::= LCURLY StatementList:sl RCURLY
 
 ExpressionList ::= ExpressionList:el COMMA Expression:e
         {: el.add(e); RESULT = el; :} |
-    Expression:e {: ExpressionList el = new ExpressionList(exleft);
+    Expression:e {: ExpList el = new ExpList(exleft);
                     el.add(e);
                     RESULT = el; :};
 
@@ -170,7 +171,7 @@ Expression ::=
     INTEGER_LITERAL:i {: RESULT = new IntegerLiteral(Integer.parseInt(i), ixleft); :} |
     TRUE:t {: RESULT = new True(txleft); :} |
     FALSE:f {: RESULT = new False(fxleft); :} |
-    Identifier:i {: RESULT = new IdentifierExp(i, ixleft); :} |
+    IDENTIFIER:i {: RESULT = new IdentifierExp(i, ixleft); :} |
     THIS:t {: RESULT = new This(txleft); :} |
     NEW INT LSQUARE Expression:e RSQUARE
         {: RESULT = new NewArray(e, exleft); :} |
