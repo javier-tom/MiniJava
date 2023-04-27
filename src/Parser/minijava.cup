@@ -51,38 +51,70 @@ nonterminal Identifier Identifier;
 
 /* Precedence declarations: */
 
-precedence left PLUS;
+precedence left PLUS, MINUS;
+precedence left TIMES;
+precedence left LESS_THAN;
+precedence left AND;
 
 
 /* Productions: */
 
-Goal ::= MainClass::mc ClassDeclarationList cdl
+Goal ::= MainClass:mc ClassDeclarationList:cdl
     {: RESULT = new Program(mc, cdl, mcxleft); :};
-MainClass ::= CLASS Identifier:id1 LCURLY PUBLIC STATIC VOID MAIN LPAREN STRING LSQUARE RSQUARE
+MainClass ::= CLASS Identifier:id1 LCURLY PUBLIC STATIC VOID MAIN LPAREN STRING_TYPE LSQUARE RSQUARE
     Identifier:id2 RPAREN LCURLY Statement:s1 RCURLY RCURLY
     {: RESULT = new MainClass(id1, id2, s1, id1xleft); :};
 ClassDeclaration ::= CLASS Identifier:id1 EXTENDS Identifier:id2 LCURLY VarDeclarationList:var_list (MethodDeclaration)* RCURLY;
 MethodDeclaration ::= PUBLIC Type IDENTIFIER LPAREN (Type IDENTIFIER (COMMA Type IDENTIFIER)*)? RPAREN LCURLY (VarDeclaration)*
     (Statement)* RETURN Expression SEMICOLON RCURLY;
 Type ::= INT LSQUARE RSQUARE | BOOLEAN | INT | IDENTIFIER;
-Statement ::= LCURLY StatementList RCURLY |
+
+Identifier ::= IDENTIFIER:i {: RESULT = new Identifier(i); :};
+
+StatementList ::= StatementList:sl Statement:s
+        {: sl.add(s); RESULT = sl; :} |
+        Statement:s {: StatementList sl = new StatementList(sxleft);
+                       sl.add(s);
+                       RESULT = sl; :};
+
+Statement ::= LCURLY StatementList:sl RCURLY
+        {: RESULT = new Block(sl, slxleft); :} |
     IF:i LPAREN Expression:e RPAREN Statement:s1 ELSE Statement:s2
         {: RESULT = new If(e, s1, s2, ixleft); :} |
     WHILE:w LPAREN Expression:e RPAREN Statement:s
         {: RESULT = new While(e, s, wxleft); :} |
-    SOUT LPAREN Expression RPAREN SEMICOLON |
-    IDENTIFIER BECOMES Expression SEMICOLON |
-    IDENTIFIER LSQUARE Expression RSQUARE SEMICOLON;
-Expression ::= Expression (AND | LESS_THAN | PLUS | MINUS | TIMES) Expression |
-    Expression LSQUARE Expression RSQUARE |
-    Expression DOT LENGTH |
-    Expression DOT IDENTIFIER LPAREN (Expression (COMMA Expression)*)? RPAREN |
-    INTEGER_LITERAL |
+    SOUT:s LPAREN Expression:e RPAREN SEMICOLON
+        {: RESULT = new Print(e, sxleft); :} |
+    Identifier:i BECOMES Expression:e SEMICOLON
+        {: RESULT = new Assign(i, e, ixleft); :} |
+    Identifier:i LSQUARE Expression:e1 RSQUARE BECOMES Expression:e2 SEMICOLON
+        {: RESULT = new ArrayAssign(i, e1, e2, ixleft); :};
+
+ExpressionList ::= ExpressionList:el Expression:e
+        {: el.add(e); RESULT = el; :} |
+    Expression:e {: ExpresionList el = new ExpressionList(exleft);
+                    el.add(e);
+                    RESULT = el; :};
+
+Expression ::=
+    Expression:e1 AND:a Expression:e2 {: RESULT = new And(e1, e2, axleft); :} |
+    Expression:e1 LESS_THAN:a Expression:e2 {: RESULT = new LessThan(e1, e2, axleft); :} |
+    Expression:e1 PLUS:a Expression:e2 {: RESULT = new Plus(e1, e2, axleft); :} |
+    Expression:e1 MINUS:a Expression:e2 {: RESULT = new Minus(e1, e2, axleft); :} |
+    Expression:e1 TIMES:a Expression:e2 {: RESULT = new Times(e1, e2, axleft); :} |
+    Expression:e1 LSQUARE Expression:e2 RSQUARE
+        {: RESULT = new ArrayLookup(e1, e2, e1xleft); :} |
+    Expression:e DOT LENGTH
+        {: RESULT = new ArrayLength(e, exleft); :} |
+    Expression:e DOT Identifier:i LPAREN ExpressionList:el RPAREN
+        {: RESULT = new Call(e, i, el, exleft); :} |
+    INTEGER_LITERAL:i {: RESULT = new IntegerLiteral(Integer.parseInt(i), ixleft); :} |
     TRUE:t {: RESULT = new True(txleft); :} |
     FALSE:f {: RESULT = new False(fxleft); :} |
-    IDENTIFIER |
+    Identifier:i {: RESULT = new IdentifierExp(i, ixleft); :} |
     THIS:t {: RESULT = new This(txleft); :} |
-    NEW INT LSQUARE Expression RSQUARE |
-    NEW IDENTIFIER LPAREN RPAREN |
-    NOT Expression |
-    LPAREN Expression RPAREN;
+    NEW:n INT LSQUARE Expression:e RSQUARE
+        {: RESULT = new NewArray(e, nxleft); :} |
+    NEW:n Identifier:i LPAREN RPAREN {: RESULT = new NewObject(i, nxleft); :} |
+    NOT:n Expression:e {: RESULT = new Not(e, nxleft); :} |
+    LPAREN Expression:e RPAREN {: RESULT = e; :};
