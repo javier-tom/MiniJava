@@ -53,4 +53,7 @@ public class TestParser {
     public void testArrays() {
         runParserTestCase("Arrays");
     }
+    @Test
+    public void testWhile() { runParserTestCase("While");
+    }
 }

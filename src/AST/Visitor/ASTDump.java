@@ -208,20 +208,21 @@ public class ASTDump implements Visitor {
     // Statement s;
     public void visit(While n) {
         indent();
-        System.out.print("while ");
+        System.out.print("While");
         lineNumber(n);
+        currentDepth++;
         indent();
         System.out.println("condition:");
         currentDepth++;
         n.e.accept(this);
         n.s.accept(this);
-        currentDepth--;
+        currentDepth -= 2;
     }
 
     // Exp e;
     public void visit(Print n) {
         indent();
-        System.out.print("Print ");
+        System.out.print("Print");
         lineNumber(n);
         currentDepth++;
         n.e.accept(this);
@@ -232,7 +233,7 @@ public class ASTDump implements Visitor {
     // Exp e;
     public void visit(Assign n) {
         indent();
-        System.out.print("Assign to " + n.i.s);
+        System.out.print("Assign " + n.i.s);
         lineNumber(n);
         currentDepth++;
         indent();
