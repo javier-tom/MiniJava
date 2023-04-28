@@ -45,5 +45,26 @@ Program
           LessThan (line 16)
             True (line 16)
             False (line 16)
+      Assign i (line 17)
+        new value:
+          Plus (line 17)
+            3 (line 17)
+            Times (line 17)
+              5 (line 17)
+              2 (line 17)
+      Assign i (line 18)
+        new value:
+          Plus (line 18)
+            Times (line 18)
+              2 (line 18)
+              5 (line 18)
+            3 (line 18)
+      Assign i (line 19)
+        new value:
+          Times (line 19)
+            Plus (line 19)
+              3 (line 19)
+              5 (line 19)
+            2 (line 19)
       Return
-        0 (line 17)
+        0 (line 20)

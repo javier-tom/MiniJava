@@ -14,6 +14,9 @@ class Operators {
         i = true && false;
         i = !true;
         i = true < false;
+        i = 3 + 5 * 2;
+        i = 2 * 5 + 3;
+        i = (3 + 5) * 2;
         return 0;
     }
 }
