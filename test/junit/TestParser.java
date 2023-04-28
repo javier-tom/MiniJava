@@ -50,10 +50,11 @@ public class TestParser {
     }
 
     @Test
-    public void testArrays() {
-        runParserTestCase("Arrays");
-    }
+    public void testArrays() { runParserTestCase("Arrays"); }
     @Test
-    public void testWhile() { runParserTestCase("While");
-    }
+    public void testWhile() { runParserTestCase("While"); }
+    @Test
+    public void testIf() { runParserTestCase("If"); }
+    @Test
+    public void testOperators() { runParserTestCase("Operators");}
 }
