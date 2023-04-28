@@ -11,6 +11,6 @@ based on the signatures of the ASTNodes.
 We added the necessary non-terminals and precedence to make our grammar work.
 We also worked on implementing the Abstract Syntax Tree together in ASTDump.java.
 David set up the test builder. We split up creating the tests:
-    David: Arrays.java/.expected, Simple.java/.expected
+    David: Arrays.java/.expected, Simple.java/.expected, Classes.java/.expected
     Javier: If.java/.expected, Operators.java/.expected, While.java/.expected
 
