@@ -215,8 +215,9 @@ public class ASTDump implements Visitor {
         System.out.println("condition:");
         currentDepth++;
         n.e.accept(this);
+        currentDepth--;
         n.s.accept(this);
-        currentDepth -= 2;
+        currentDepth--;
     }
 
     // Exp e;
@@ -247,7 +248,7 @@ public class ASTDump implements Visitor {
     // Exp e1,e2;
     public void visit(ArrayAssign n) {
         indent();
-        System.out.print("ArrayAssign to " + n.i.s);
+        System.out.print("ArrayAssign " + n.i.s);
         lineNumber(n);
         currentDepth++;
         indent();

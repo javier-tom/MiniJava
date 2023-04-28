@@ -23,13 +23,13 @@ Program
           LessThan (line 11)
             i (line 11)
             max (line 11)
-          Print (line 12)
-            i (line 12)
-          Assign i (line 13)
-            new value:
-              Plus (line 13)
-                i (line 13)
-                1 (line 13)
+        Print (line 12)
+          i (line 12)
+        Assign i (line 13)
+          new value:
+            Plus (line 13)
+              i (line 13)
+              1 (line 13)
       Assign i (line 15)
         new value:
           0 (line 15)

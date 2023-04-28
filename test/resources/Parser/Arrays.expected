@@ -1,6 +1,6 @@
 Program
   MainClass Main (line 1)
-    Print  (line 3)
+    Print (line 3)
       Call run (line 3)
         on class:
           NewObject Thing (line 3)
@@ -15,20 +15,20 @@ Program
       variables:
         VarDecl int[] a (line 10)
         VarDecl int i (line 11)
-      Assign to i (line 13)
+      Assign i (line 13)
         new value:
           0 (line 13)
-      Assign to a (line 14)
+      Assign a (line 14)
         new value:
           NewArray (line 14)
             size:
               10 (line 14)
-      Assign to arr (line 15)
+      Assign arr (line 15)
         new value:
           NewArray (line 15)
             size:
               10 (line 15)
-      ArrayAssign to a (line 16)
+      ArrayAssign a (line 16)
         index:
           0 (line 16)
         value:
@@ -38,17 +38,17 @@ Program
           LessThan (line 18)
             i (line 18)
             10 (line 18)
-        ArrayAssign to a (line 19)
+        ArrayAssign a (line 19)
           index:
             i (line 19)
           value:
             i (line 19)
-        Assign to i (line 20)
+        Assign i (line 20)
           new value:
             Plus (line 20)
               i (line 20)
               1 (line 20)
-      Assign to i (line 23)
+      Assign i (line 23)
         new value:
           Minus (line 23)
             i (line 23)
@@ -60,7 +60,7 @@ Program
             LessThan (line 24)
               1 (line 24)
               i (line 24)
-        ArrayAssign to arr (line 25)
+        ArrayAssign arr (line 25)
           index:
             i (line 25)
           value:
@@ -69,7 +69,7 @@ Program
                 a (line 25)
               at index:
                 i (line 25)
-        Assign to i (line 26)
+        Assign i (line 26)
           new value:
             Minus (line 26)
               i (line 26)

@@ -1,6 +1,6 @@
 Program
   MainClass Main (line 1)
-    Assign to x (line 3)
+    Assign x (line 3)
       new value:
         Call nothing (line 3)
           on class:
