@@ -1,0 +1,12 @@
+We changed the grammar for the given starter code to reflect the style of MiniJava online.
+This means having Program/Goal at the root of our productions. Our grammar does not have any shift reduce conflicts.
+We did not choose to add any extra features to our parser.
+When working on the parser project, the two of us worked on the productions for the grammar together.
+We went through MiniJava online to get the skeleton structure for our grammar and constructed our productions
+based on the signatures of the ASTNodes.
+We added the necessary nonterminals and precedence to make our grammar work.
+We also worked on implementing the Abstract Syntax Tree together in ASTDump.java.
+David set up the test builder. We split up creating the tests:
+    David: Arrays.java/.expected, Simple.java/.expected
+    Javier: If.java/.expected, Operators.java/.expected, While.java/.expected
+
