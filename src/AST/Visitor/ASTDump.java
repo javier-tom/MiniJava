@@ -118,7 +118,6 @@ public class ASTDump implements Visitor {
         indent();
         System.out.println("params:");
         currentDepth++;
-        indent();
         for (int i = 0; i < n.fl.size(); i++) {
             Formal f = n.fl.get(i);
             f.accept(this);
@@ -127,7 +126,6 @@ public class ASTDump implements Visitor {
         indent();
         System.out.println("variables:");
         currentDepth++;
-        indent();
         for (int i = 0; i < n.vl.size(); i++) {
             VarDecl varDecl = n.vl.get(i);
             n.vl.get(i).accept(this);
@@ -136,11 +134,9 @@ public class ASTDump implements Visitor {
             Statement s = n.sl.get(i);
             s.accept(this);
         }
-        currentDepth--;
         indent();
         Exp e = n.e;
         System.out.print("Return ");
-        lineNumber(e);
         e.accept(this);
         currentDepth = 1;
     }
@@ -152,6 +148,7 @@ public class ASTDump implements Visitor {
         n.t.accept(this);
         System.out.print(" ");
         n.i.accept(this);
+        System.out.println();
     }
 
     public void visit(IntArrayType n) {
@@ -226,12 +223,9 @@ public class ASTDump implements Visitor {
     // Exp e;
     public void visit(Assign n) {
         indent();
-        System.out.print("= ");
-        lineNumber(n);
-        currentDepth++;
         n.i.accept(this);
+        System.out.print(" = ");
         n.e.accept(this);
-        currentDepth--;
     }
 
     // Identifier i;
@@ -356,8 +350,7 @@ public class ASTDump implements Visitor {
 
     // int i;
     public void visit(IntegerLiteral n) {
-        indent();
-        System.out.print("IntegerLiteral " + n.i);
+        System.out.print(n.i);
         lineNumber(n);
     }
 
