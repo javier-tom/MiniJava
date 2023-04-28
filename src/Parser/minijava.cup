@@ -65,8 +65,7 @@ precedence left NOT;
 /* Productions: */
 
 Program ::= MainClass:mc ClassDeclList:cdl
-    {: RESULT = new Program(mc, cdl, mcxleft); :} |
-    MainClass:mc {: RESULT = new Program (mc, new ClassDeclList(new Location(0, 0)), mcxleft); :};
+    {: RESULT = new Program(mc, cdl, mcxleft); :};
 
 MainClass ::= CLASS Identifier:id1 LCURLY PUBLIC STATIC VOID MAIN LPAREN STRING_TYPE LSQUARE RSQUARE
     Identifier:id2 RPAREN LCURLY Statement:s1 RCURLY RCURLY
@@ -80,24 +79,28 @@ ClassDecl ::= CLASS Identifier:id1 EXTENDS Identifier:id2 LCURLY VarDeclList:var
 ClassDeclList ::= ClassDeclList:cd_list ClassDecl:c
     {: cd_list.add(c);
        RESULT = cd_list; :}
-    | ClassDecl:c
-        {: ClassDeclList cdl = new ClassDeclList(cxleft);
-           cdl.add(c);
-           RESULT = cdl; :};
+    | {: ClassDeclList cdl = new ClassDeclList(new Location(0, 0));
+         RESULT = cdl; :};
 
 MethodDecl ::= PUBLIC Type:t Identifier:id LPAREN FormalList:formal_list RPAREN LCURLY VarDeclList:var_list
     StatementList:s_list RETURN Expression:exp SEMICOLON RCURLY
     {: RESULT = new MethodDecl(t, id, formal_list, var_list, s_list, exp, txleft); :}
     | PUBLIC Type:t Identifier:id LPAREN RPAREN LCURLY VarDeclList:var_list
     StatementList:s_list RETURN Expression:exp SEMICOLON RCURLY
-    {: RESULT = new MethodDecl(t, id, new FormalList(txleft), var_list, s_list, exp, txleft); :};
+    {: RESULT = new MethodDecl(t, id, new FormalList(txleft), var_list, s_list, exp, txleft); :} |
+
+    // These are the same as above but without StatementList, since it are optional
+    PUBLIC Type:t Identifier:id LPAREN FormalList:formal_list RPAREN LCURLY VarDeclList:var_list
+    RETURN Expression:exp SEMICOLON RCURLY
+    {: RESULT = new MethodDecl(t, id, formal_list, var_list, new StatementList(txleft), exp, txleft); :}
+    | PUBLIC Type:t Identifier:id LPAREN RPAREN LCURLY VarDeclList:var_list
+    RETURN Expression:exp SEMICOLON RCURLY
+    {: RESULT = new MethodDecl(t, id, new FormalList(txleft), var_list, new StatementList(txleft), exp, txleft); :};
 
 MethodDeclList ::= MethodDeclList:methdecl_list MethodDecl:method
     {: methdecl_list.add(method);
        RESULT = methdecl_list; :}
-    | MethodDecl:method
-        {: MethodDeclList mdl = new MethodDeclList(methodxleft);
-           mdl.add(method);
+    | {: MethodDeclList mdl = new MethodDeclList(new Location(0, 0));
            RESULT = mdl; :};
 
 VarDecl ::= Type:t Identifier:id SEMICOLON
@@ -105,10 +108,8 @@ VarDecl ::= Type:t Identifier:id SEMICOLON
 VarDeclList ::= VarDeclList:var_list VarDecl:var
     {: var_list.add(var);
        RESULT = var_list; :}
-    | VarDecl:var
-    {: VarDeclList vdl = new VarDeclList(varxleft);
-       vdl.add(var);
-       RESULT = vdl; :};
+    | {: VarDeclList vdl = new VarDeclList(new Location(0, 0));
+        RESULT = vdl; :};
 
 Formal ::= Type:t Identifier:id
     {: RESULT = new Formal(t, id, txleft); :};
@@ -140,6 +141,8 @@ StatementList ::= StatementList:sl Statement:s
 
 Statement ::= LCURLY StatementList:sl RCURLY
         {: RESULT = new Block(sl, slxleft); :} |
+    LCURLY:l RCURLY
+            {: RESULT = new Block(new StatementList(lxleft), lxleft); :} |
     IF LPAREN Expression:e RPAREN Statement:s1 ELSE Statement:s2
         {: RESULT = new If(e, s1, s2, exleft); :} |
     WHILE LPAREN Expression:e RPAREN Statement:s
@@ -169,6 +172,8 @@ Expression ::=
         {: RESULT = new ArrayLength(e, exleft); :} |
     Expression:e DOT Identifier:i LPAREN ExpressionList:el RPAREN
         {: RESULT = new Call(e, i, el, exleft); :} |
+    Expression:e DOT Identifier:i LPAREN RPAREN
+            {: RESULT = new Call(e, i, new ExpList(new Location(0, 0)), exleft); :} |
     INTEGER_LITERAL:i {: RESULT = new IntegerLiteral(Integer.parseInt(i), ixleft); :} |
     TRUE:t {: RESULT = new True(txleft); :} |
     FALSE:f {: RESULT = new False(fxleft); :} |
