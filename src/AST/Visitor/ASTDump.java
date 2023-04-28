@@ -154,7 +154,7 @@ public class ASTDump implements Visitor {
     }
 
     public void visit(IntArrayType n) {
-        System.out.print("int []");
+        System.out.print("int[]");
     }
 
     public void visit(BooleanType n) {
@@ -250,12 +250,12 @@ public class ASTDump implements Visitor {
         lineNumber(n);
         currentDepth++;
         indent();
-        System.out.println("index");
+        System.out.println("index:");
         currentDepth++;
         n.e1.accept(this);
         currentDepth--;
         indent();
-        System.out.println("value");
+        System.out.println("value:");
         currentDepth++;
         n.e2.accept(this);
         currentDepth -= 2;
@@ -319,7 +319,7 @@ public class ASTDump implements Visitor {
     // Exp e1,e2;
     public void visit(ArrayLookup n) {
         indent();
-        System.out.println("ArrayLookup");
+        System.out.print("ArrayLookup");
         lineNumber(n);
 
         currentDepth++;
