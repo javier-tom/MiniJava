@@ -342,7 +342,9 @@ public class ASTDump implements Visitor {
     public void visit(ArrayLength n) {
         indent();
         System.out.println("ArrayLength on:");
+        currentDepth++;
         n.e.accept(this);
+        currentDepth--;
     }
 
     // Exp e;

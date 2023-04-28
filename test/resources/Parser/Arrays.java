@@ -15,7 +15,7 @@ class Thing {
         arr = new int [10];
         a[0] = 0;
 
-        while (i < 10) {
+        while (i < a.length) {
             a[i] = i;
             i = i + 1;
         }

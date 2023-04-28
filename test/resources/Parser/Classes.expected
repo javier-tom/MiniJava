@@ -1,0 +1,56 @@
+Program
+  MainClass Main (line 1)
+    Print (line 3)
+      Call run (line 3)
+        on class:
+          NewObject Thing (line 3)
+        parameters:
+
+  Class Thing (line 7)
+    fields:
+      VarDecl int x (line 8)
+      VarDecl boolean y (line 9)
+      VarDecl int[] z (line 10)
+    MethodDecl init (line 12)
+      returns int
+      params:
+        int a
+        boolean b
+        int[] c
+      variables:
+      Assign x (line 13)
+        new value:
+          a (line 13)
+      Assign y (line 14)
+        new value:
+          b (line 14)
+      Assign z (line 15)
+        new value:
+          c (line 15)
+      Return
+        0 (line 16)
+  MethodDecl run (line 19)
+    returns int
+    params:
+    variables:
+    Return
+      0 (line 20)
+
+Class Foo extends Thing (line 24)
+  fields:
+    VarDecl int a (line 25)
+    VarDecl int b (line 26)
+  MethodDecl run (line 28)
+    returns int
+    params:
+    variables:
+    Return
+      Call init (line 29)
+        on class:
+          Thing (line 29)
+        parameters:
+          a (line 29)
+          True (line 29)
+          NewArray (line 29)
+            size:
+              b (line 29)

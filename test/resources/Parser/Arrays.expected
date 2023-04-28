@@ -37,7 +37,8 @@ Program
         condition:
           LessThan (line 18)
             i (line 18)
-            10 (line 18)
+            ArrayLength on:
+              a (line 18)
         ArrayAssign a (line 19)
           index:
             i (line 19)

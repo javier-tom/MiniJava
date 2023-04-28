@@ -59,6 +59,7 @@ precedence left TIMES;
 precedence left LESS_THAN;
 precedence left AND;
 precedence left NOT;
+precedence left DOT;
 
 
 
