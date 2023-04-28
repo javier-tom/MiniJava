@@ -130,13 +130,15 @@ public class ASTDump implements Visitor {
             VarDecl varDecl = n.vl.get(i);
             n.vl.get(i).accept(this);
         }
+        currentDepth--;
         for (int i = 0; i < n.sl.size(); i++) {
             Statement s = n.sl.get(i);
             s.accept(this);
         }
         indent();
         Exp e = n.e;
-        System.out.print("Return ");
+        System.out.println("Return");
+        currentDepth++;
         e.accept(this);
         currentDepth = 1;
     }
@@ -180,19 +182,26 @@ public class ASTDump implements Visitor {
     // Statement s1,s2;
     public void visit(If n) {
         indent();
-        System.out.print("if " );
+        System.out.print("If");
         lineNumber(n);
+
+        currentDepth++;
         indent();
         System.out.println("condition:");
         currentDepth++;
         n.e.accept(this);
-        n.s1.accept(this);
-        indent();
         currentDepth--;
-        System.out.print("else");
+        indent();
+        System.out.println("body:");
+        currentDepth++;
+        n.s1.accept(this);
+        currentDepth--;
+
+        indent();
+        System.out.println("else");
         currentDepth++;
         n.s2.accept(this);
-        currentDepth--;
+        currentDepth -= 2;
     }
 
     // Exp e;
@@ -223,9 +232,14 @@ public class ASTDump implements Visitor {
     // Exp e;
     public void visit(Assign n) {
         indent();
-        n.i.accept(this);
-        System.out.print(" = ");
+        System.out.print("Assign to " + n.i.s);
+        lineNumber(n);
+        currentDepth++;
+        indent();
+        System.out.println("new value:");
+        currentDepth++;
         n.e.accept(this);
+        currentDepth -= 2;
     }
 
     // Identifier i;
@@ -350,6 +364,7 @@ public class ASTDump implements Visitor {
 
     // int i;
     public void visit(IntegerLiteral n) {
+        indent();
         System.out.print(n.i);
         lineNumber(n);
     }
