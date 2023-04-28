@@ -1,15 +1,15 @@
 Program
   MainClass Main (line 1)
     Print (line 3)
-      Call loops (line 3)
+      Call If (line 3)
         on class:
-          NewObject Loops (line 3)
+          NewObject If (line 3)
         parameters:
           5 (line 3)
 
-  Class Loops (line 7)
+  Class If (line 7)
     fields:
-    MethodDecl loops (line 8)
+    MethodDecl If (line 8)
       returns int
       params:
         int max
@@ -18,20 +18,16 @@ Program
       Assign i (line 10)
         new value:
           0 (line 10)
-      While (line 11)
+      If (line 11)
         condition:
           LessThan (line 11)
             i (line 11)
             max (line 11)
-        Print (line 12)
-          i (line 12)
-        Assign i (line 13)
-          new value:
-            Plus (line 13)
-              i (line 13)
-              1 (line 13)
-      Assign i (line 15)
-        new value:
-          0 (line 15)
+        body:
+          Print (line 12)
+            i (line 12)
+        else
+          Print (line 14)
+            max (line 14)
       Return
-        0 (line 17)
+        0 (line 16)
