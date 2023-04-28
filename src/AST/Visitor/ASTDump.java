@@ -246,14 +246,19 @@ public class ASTDump implements Visitor {
     // Exp e1,e2;
     public void visit(ArrayAssign n) {
         indent();
-        System.out.print("= ");
+        System.out.print("ArrayAssign to " + n.i.s);
         lineNumber(n);
-        n.i.accept(this);
         currentDepth++;
+        indent();
         System.out.println("index");
+        currentDepth++;
         n.e1.accept(this);
-        n.e2.accept(this);
         currentDepth--;
+        indent();
+        System.out.println("value");
+        currentDepth++;
+        n.e2.accept(this);
+        currentDepth -= 2;
     }
 
     // Exp e1,e2;

@@ -1,0 +1,19 @@
+Program
+  MainClass Main (line 1)
+    Assign to x (line 3)
+      new value:
+        Call nothing (line 3)
+          on class:
+            Something (line 3)
+          parameters:
+            1 (line 3)
+
+  Class Something (line 7)
+    fields:
+    MethodDecl nothing (line 8)
+      returns int
+      params:
+        int arg
+      variables:
+      Return
+        arg (line 9)
