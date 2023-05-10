@@ -95,7 +95,6 @@ public class MiniJava {
 
             // Dump symbol tables
             for (String s: classes.keySet()) {
-                System.out.println("class " + s + ":");
                 if (classes.get(s) != null)
                     System.out.println(classes.get(s));
             }

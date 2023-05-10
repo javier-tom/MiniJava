@@ -6,12 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 public class MethodTable {
-    public List<Type> params = new ArrayList<>();
-    public Map<String, Type> locals = new HashMap<>();
-    public Type returnType;
+    public List<String> params = new ArrayList<>();
+    public Map<String, String> locals = new HashMap<>();
+    public String name;
+    public String returnType;
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append("  method ");
+        sb.append(name);
+        sb.append(":\n");
         sb.append("    params: ");
         for (int i = 0; i < params.size(); i++) {
             sb.append(params.get(i));
@@ -21,7 +25,7 @@ public class MethodTable {
         sb.append("\n    returns: ").append(returnType);
         sb.append("\n    locals:\n");
         for (String s: locals.keySet()) {
-            Type t = locals.get(s);
+            String t = locals.get(s);
             sb.append("      ");
             sb.append(t);
             sb.append(" ");

@@ -18,12 +18,12 @@ public class FillSymbolTables implements Visitor {
     // Display added for toy example language.  Not used in regular MiniJava
     public void visit(Display n) {}
 
-    private Symbols.Type getType(Type t) {
-        if (t instanceof IntegerType) return Symbols.Type.INTEGER;
-        else if (t instanceof IntArrayType) return Symbols.Type.INTARRAY;
-        else if (t instanceof BooleanType) return Symbols.Type.BOOLEAN;
-        else if (t instanceof IdentifierType) return Symbols.Type.CLASS;
-        else return Symbols.Type.ERROR;
+    private String getType(Type t) {
+        if (t instanceof IntegerType) return "int";
+        else if (t instanceof IntArrayType) return "int[]";
+        else if (t instanceof BooleanType) return "boolean";
+        else if (t instanceof IdentifierType) return ((IdentifierType) t).s;
+        else return "*error";
     }
 
     // MainClass m;
@@ -46,6 +46,7 @@ public class FillSymbolTables implements Visitor {
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
         currClass = new ClassTable();
+        currClass.name = n.i.s;
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.get(i).accept(this);
@@ -65,6 +66,8 @@ public class FillSymbolTables implements Visitor {
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
         currClass = new ClassTable();
+        currClass.name = n.i.s;
+        currClass.superClass = n.j.s;
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.get(i).accept(this);
@@ -81,7 +84,7 @@ public class FillSymbolTables implements Visitor {
     // Type t;
     // Identifier i;
     public void visit(VarDecl n) {
-        Symbols.Type t = getType(n.t);
+        String t = getType(n.t);
         if (currMethod != null) {
             currMethod.locals.put(n.i.s, t);
         } else {
@@ -97,6 +100,7 @@ public class FillSymbolTables implements Visitor {
     // Exp e;
     public void visit(MethodDecl n) {
         currMethod = new MethodTable();
+        currMethod.name = n.i.s;
 
         for (int i = 0; i < n.fl.size(); i++) {
             n.fl.get(i).accept(this);
@@ -114,7 +118,7 @@ public class FillSymbolTables implements Visitor {
     // Type t;
     // Identifier i;
     public void visit(Formal n) {
-        Symbols.Type t = getType(n.t);
+        String t = getType(n.t);
         currMethod.params.add(t);
     }
 
