@@ -2,6 +2,7 @@ import java.io.*;
 
 import AST.Program;
 import AST.Visitor.ASTDump;
+import AST.Visitor.FillSymbolTables;
 import AST.Visitor.PrettyPrintVisitor;
 import Parser.parser;
 import Parser.sym;
@@ -14,9 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MiniJava {
-    // Symbol tables
-    private Map<String, ClassTable> classes = new HashMap<>();
-
     private static void usage() {
         System.out.println("USAGE: MiniJava -S [filename]");
         System.exit(1);
@@ -80,6 +78,26 @@ public class MiniJava {
                 System.err.println(e);
                 e.printStackTrace();
                 System.exit(1);
+            }
+        } else if (args[0].equals("-T")) {
+            // Fill symbol tables
+            Map<String, ClassTable> classes = new HashMap<>();
+            parser p = new parser(scanner, sf);
+            try {
+                Symbol sym = p.parse();
+                Program program = (Program)sym.value;
+                program.accept(new FillSymbolTables(classes));
+            } catch (Exception e) {
+                System.err.println(e);
+                e.printStackTrace();
+                System.exit(1);
+            }
+
+            // Dump symbol tables
+            for (String s: classes.keySet()) {
+                System.out.println("class " + s + ":");
+                if (classes.get(s) != null)
+                    System.out.println(classes.get(s));
             }
         } else {
             usage();

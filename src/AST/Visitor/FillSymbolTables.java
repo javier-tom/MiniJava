@@ -97,7 +97,6 @@ public class FillSymbolTables implements Visitor {
     // Exp e;
     public void visit(MethodDecl n) {
         currMethod = new MethodTable();
-        n.t.accept(this);
 
         for (int i = 0; i < n.fl.size(); i++) {
             n.fl.get(i).accept(this);
@@ -107,6 +106,7 @@ public class FillSymbolTables implements Visitor {
             n.vl.get(i).accept(this);
         }
 
+        currMethod.returnType = getType(n.t);
         currClass.methods.put(n.i.s, currMethod);
         currMethod = null;
     }
