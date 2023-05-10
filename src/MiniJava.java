@@ -6,12 +6,17 @@ import AST.Visitor.PrettyPrintVisitor;
 import Parser.parser;
 import Parser.sym;
 import Scanner.*;
+import Symbols.ClassTable;
 import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.Symbol;
 
-import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MiniJava {
+    // Symbol tables
+    private Map<String, ClassTable> classes = new HashMap<>();
+
     private static void usage() {
         System.out.println("USAGE: MiniJava -S [filename]");
         System.exit(1);
