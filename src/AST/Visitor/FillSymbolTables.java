@@ -16,8 +16,14 @@ public class FillSymbolTables implements Visitor {
     }
 
     // Display added for toy example language.  Not used in regular MiniJava
-    public void visit(Display n) {
-        // Unused
+    public void visit(Display n) {}
+
+    private Symbols.Type getType(Type t) {
+        if (t instanceof IntegerType) return Symbols.Type.INTEGER;
+        else if (t instanceof IntArrayType) return Symbols.Type.INTARRAY;
+        else if (t instanceof BooleanType) return Symbols.Type.BOOLEAN;
+        else if (t instanceof IdentifierType) return Symbols.Type.CLASS;
+        else return Symbols.Type.ERROR;
     }
 
     // MainClass m;
@@ -32,8 +38,7 @@ public class FillSymbolTables implements Visitor {
     // Identifier i1,i2;
     // Statement s;
     public void visit(MainClass n) {
-
-        n.s.accept(this);
+        classes.put(n.i1.s, null);
     }
 
     // Identifier i;
@@ -76,7 +81,12 @@ public class FillSymbolTables implements Visitor {
     // Type t;
     // Identifier i;
     public void visit(VarDecl n) {
-        n.t.accept(this);
+        Symbols.Type t = getType(n.t);
+        if (currMethod != null) {
+            currMethod.locals.put(n.i.s, t);
+        } else {
+            currClass.fields.put(n.i.s, t);
+        }
     }
 
     // Type t;
@@ -86,50 +96,26 @@ public class FillSymbolTables implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
-        indent();
-        System.out.print("MethodDecl " + n.i.toString());
-        lineNumber(n);
-        currentDepth++;
-        indent();
-        System.out.print("returns ");
+        currMethod = new MethodTable();
         n.t.accept(this);
-        System.out.println();
-        indent();
-        System.out.println("params:");
-        currentDepth++;
+
         for (int i = 0; i < n.fl.size(); i++) {
-            Formal f = n.fl.get(i);
-            f.accept(this);
+            n.fl.get(i).accept(this);
         }
-        currentDepth--;
-        indent();
-        System.out.println("variables:");
-        currentDepth++;
+
         for (int i = 0; i < n.vl.size(); i++) {
-            VarDecl varDecl = n.vl.get(i);
             n.vl.get(i).accept(this);
         }
-        currentDepth--;
-        for (int i = 0; i < n.sl.size(); i++) {
-            Statement s = n.sl.get(i);
-            s.accept(this);
-        }
-        indent();
-        Exp e = n.e;
-        System.out.println("Return");
-        currentDepth++;
-        e.accept(this);
-        currentDepth = 1;
+
+        currClass.methods.put(n.i.s, currMethod);
+        currMethod = null;
     }
 
     // Type t;
     // Identifier i;
     public void visit(Formal n) {
-        indent();
-        n.t.accept(this);
-        System.out.print(" ");
-        n.i.accept(this);
-        System.out.println();
+        Symbols.Type t = getType(n.t);
+        currMethod.params.add(t);
     }
 
     public void visit(IntArrayType n) {
