@@ -122,15 +122,57 @@ public class TypeChecker implements Visitor {
     }
 
     // Exp e;
-    public void visit(Print n) {}
+    public void visit(Print n) {
+        n.e.accept(this);
+        expectType(n.e, INT);
+    }
 
     // Identifier i;
     // Exp e;
-    public void visit(Assign n) {}
+    public void visit(Assign n) {
+        // Get type of variable
+        Type t = scope.locals.get(n.i.s);
+        if (t == null) {
+            // Check for class field
+            t = classes.get(scope.className).fields.get(n.i.s);
+            // TODO: is accessing superclass fields allowed?
+            if (t == null) {
+                System.err.println("Error on line " + n.line_number + ": unknown variable "
+                    + n.i.s);
+                return;
+            }
+        }
+        n.e.accept(this);
+        if (!t.isAssignable(n.e.type)) {
+            System.err.println("Error on line " + n.line_number + ": "
+                    + "cannot assign " + n.e.type + " to a " + t);
+        }
+    }
 
     // Identifier i;
     // Exp e1,e2;
-    public void visit(ArrayAssign n) {}
+    public void visit(ArrayAssign n) {
+        n.e1.accept(this);
+        expectType(n.e1, INT);
+        n.e2.accept(this);
+        expectType(n.e2, INT);
+
+        Type t = scope.locals.get(n.i.s);
+        if (t == null) {
+            // Check for class field
+            t = classes.get(scope.className).fields.get(n.i.s);
+            if (t == null) {
+                System.err.println("Error on line " + n.line_number + ": unknown variable "
+                    + n.i.s);
+                return;
+            }
+        }
+
+        if (!t.sameType(ARRAY)) {
+            System.err.println("Error on line " + n.line_number + ": expected type "
+                + ARRAY + ". Got type " + t);
+        }
+    }
 
     // Exp e1,e2;
     public void visit(And n) {
@@ -189,7 +231,7 @@ public class TypeChecker implements Visitor {
     // Exp e;
     public void visit(ArrayLength n) {
         n.e.accept(this);
-        expectType(n.e, INT);
+        expectType(n.e, ARRAY);
         n.type = INT;
     }
 
@@ -252,7 +294,12 @@ public class TypeChecker implements Visitor {
     }
 
     // Identifier i;
-    public void visit(NewObject n) {}
+    public void visit(NewObject n) {
+        // Make sure is an acutal class
+        if (!classes.containsKey(n.i.s)) {
+            System.err.println("Error on line " + n.line_number + ": unknown class " + n.i.s);
+        }
+    }
 
     // Exp e;
     public void visit(Not n) {
