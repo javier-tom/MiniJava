@@ -14,6 +14,7 @@ public class TypeChecker implements Visitor {
     private final Symbols.Type ARRAY;
 
     private MethodTable scope;
+    private ClassTable currClass;
 
     private void expectType(Exp n, Type expected) {
         if (!n.type.sameType(expected)) {
@@ -52,6 +53,7 @@ public class TypeChecker implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
+        currClass = classes.get(n.i.s);
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.get(i).accept(this);
         }
@@ -62,6 +64,7 @@ public class TypeChecker implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
+        currClass = classes.get(n.i.s);
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.get(i).accept(this);
         }
@@ -78,6 +81,7 @@ public class TypeChecker implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
+        scope = currClass.methods.get(n.i.s);
         for (int i = 0; i < n.sl.size(); i++) {
             n.sl.get(i).accept(this);
         }
@@ -133,9 +137,15 @@ public class TypeChecker implements Visitor {
         // Get type of variable
         Type t = scope.locals.get(n.i.s);
         if (t == null) {
-            // Check for class field
-            t = classes.get(scope.className).fields.get(n.i.s);
-            // TODO: is accessing superclass fields allowed?
+            // Check in class hierarchy
+            ClassTable tmp = currClass;
+            while (tmp != null && t == null) {
+                t = tmp.fields.get(n.i.s);
+                tmp = classes.get(tmp.superClass);
+                if (tmp.superClass.equals("*error")) {
+                    break;
+                }
+            }
             if (t == null) {
                 System.err.println("Error on line " + n.line_number + ": unknown variable "
                     + n.i.s);
@@ -159,8 +169,16 @@ public class TypeChecker implements Visitor {
 
         Type t = scope.locals.get(n.i.s);
         if (t == null) {
-            // Check for class field
-            t = classes.get(scope.className).fields.get(n.i.s);
+            // Check in class hierarchy
+            ClassTable tmp = currClass;
+            while (tmp != null && t == null) {
+                t = tmp.fields.get(n.i.s);
+                tmp = classes.get(tmp.superClass);
+                if (tmp.superClass.equals("*error")) {
+                    break;
+                }
+            }
+            t = currClass.fields.get(n.i.s);
             if (t == null) {
                 System.err.println("Error on line " + n.line_number + ": unknown variable "
                     + n.i.s);
@@ -241,6 +259,7 @@ public class TypeChecker implements Visitor {
     public void visit(Call n) {
         n.e.accept(this);
         // The type of that expression MUST be a class
+        if (n.e.type == null) return;
         ClassTable ct = n.e.type.getClassTable();
         if (ct == null) {
             System.err.print("Error on line " + n.line_number + ": ");
@@ -282,7 +301,12 @@ public class TypeChecker implements Visitor {
     }
 
     // String s;
-    public void visit(IdentifierExp n) {}
+    public void visit(IdentifierExp n) {
+        if (classes.get(n.s) == null) {
+            System.err.println("Error on line " + n.line_number + ": invalid class " + n.s);
+        }
+        n.type = classes.get(n.s).type;
+    }
 
     public void visit(This n) {
         n.type = classes.get(scope.className).type;

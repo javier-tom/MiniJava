@@ -1,11 +1,5 @@
 package Symbols;
 
-import AST.BooleanType;
-import AST.IdentifierType;
-import AST.IntArrayType;
-import AST.IntegerType;
-
-import java.util.HashMap;
 import java.util.Map;
 
 public class Type {
