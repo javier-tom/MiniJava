@@ -11,6 +11,8 @@ public class TypeChecker implements Visitor {
     private Map<String, ClassTable> classes;
     private final Symbols.Type INT;
     private final Symbols.Type BOOL;
+    private final Symbols.Type ARRAY;
+
     private MethodTable scope;
 
     private void expectType(Exp n, Type expected) {
@@ -24,6 +26,7 @@ public class TypeChecker implements Visitor {
         this.classes = classes;
         INT = new Type(null, "int", classes);
         BOOL = new Type(null, "boolean", classes);
+        ARRAY = new Type(null, "int[]", classes);
     }
 
     // Display added for toy example language.  Not used in regular MiniJava
@@ -133,12 +136,8 @@ public class TypeChecker implements Visitor {
     public void visit(Minus n) {
         n.e1.accept(this);
         n.e2.accept(this);
-        if (!n.e1.type.sameType(INT)) {
-            System.err.println("Line " + n.line_number + ", expected type int. Got type " + n.e1.type);
-        }
-        if (!n.e2.type.sameType(INT)) {
-            System.err.println("Line " + n.line_number + ", expected type int. Got type " + n.e2.type);
-        }
+        expectType(n.e1, INT);
+        expectType(n.e2, INT);
         n.type = INT;
     }
 
