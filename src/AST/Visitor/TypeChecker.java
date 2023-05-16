@@ -153,7 +153,35 @@ public class TypeChecker implements Visitor {
     // Exp e;
     // Identifier i;
     // ExpList el;
-    public void visit(Call n) {}
+    public void visit(Call n) {
+        n.e.accept(this);
+        // The type of that expression MUST be a class
+        ClassTable ct = n.e.type.getClassTable();
+        if (ct == null) {
+            System.err.print("Error on line " + n.line_number + ": ");
+            System.err.print(n.e.type + " is not a class.");
+            return;
+        }
+
+        MethodTable m = ct.methods.get(n.i.s);
+        if (m.params.size() != n.el.size()) {
+            System.err.print("Error on line " + n.line_number + ": ");
+            System.err.print("expected " + m.params.size() + " arguments, ");
+            System.err.println("got " + n.el.size() + " instead.");
+            return;
+        }
+
+        // Typecheck parameters
+        for (int i = 0; i < m.params.size(); i++) {
+            Exp param = n.el.get(i);
+            param.accept(this);
+            if (!m.params.get(i).isAssignable(param.type)) {
+                System.err.print("Error on line " + n.line_number + ": "
+                    + "expected type " + m.params.get(i) + "in parameter " + (i + 1)
+                    + " of the call to " + n.i.s + ". Got type " + param.type + " instead.");
+            }
+        }
+    }
 
     // int i;
     public void visit(IntegerLiteral n) {
@@ -171,7 +199,9 @@ public class TypeChecker implements Visitor {
     // String s;
     public void visit(IdentifierExp n) {}
 
-    public void visit(This n) {}
+    public void visit(This n) {
+        n.type = classes.get(scope.className).type;
+    }
 
     // Exp e;
     public void visit(NewArray n) {}

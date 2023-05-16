@@ -43,4 +43,7 @@ public class Type {
         return type;
     }
 
+    public ClassTable getClassTable() {
+        return classes.get(this.type);
+    }
 }
