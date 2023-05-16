@@ -106,11 +106,20 @@ public class TypeChecker implements Visitor {
 
     // Exp e;
     // Statement s1,s2;
-    public void visit(If n) {}
+    public void visit(If n) {
+        n.e.accept(this);
+        expectType(n.e, BOOL);
+        n.s1.accept(this);
+        n.s2.accept(this);
+    }
 
     // Exp e;
     // Statement s;
-    public void visit(While n) {}
+    public void visit(While n) {
+        n.e.accept(this);
+        expectType(n.e, BOOL);
+        n.s.accept(this);
+    }
 
     // Exp e;
     public void visit(Print n) {}
@@ -124,13 +133,31 @@ public class TypeChecker implements Visitor {
     public void visit(ArrayAssign n) {}
 
     // Exp e1,e2;
-    public void visit(And n) {}
+    public void visit(And n) {
+        n.e1.accept(this);
+        n.e2.accept(this);
+        expectType(n.e1, BOOL);
+        expectType(n.e2, BOOL);
+        n.type = BOOL;
+    }
 
     // Exp e1,e2;
-    public void visit(LessThan n) {}
+    public void visit(LessThan n) {
+        n.e1.accept(this);
+        n.e2.accept(this);
+        expectType(n.e1, INT);
+        expectType(n.e2, INT);
+        n.type = BOOL;
+    }
 
     // Exp e1,e2;
-    public void visit(Plus n) {}
+    public void visit(Plus n) {
+        n.e1.accept(this);
+        n.e2.accept(this);
+        expectType(n.e1, INT);
+        expectType(n.e2, INT);
+        n.type = INT;
+    }
 
     // Exp e1,e2;
     public void visit(Minus n) {
@@ -142,13 +169,29 @@ public class TypeChecker implements Visitor {
     }
 
     // Exp e1,e2;
-    public void visit(Times n) {}
+    public void visit(Times n) {
+        n.e1.accept(this);
+        n.e2.accept(this);
+        expectType(n.e1, INT);
+        expectType(n.e2, INT);
+        n.type = INT;
+    }
 
     // Exp e1,e2;
-    public void visit(ArrayLookup n) {}
+    public void visit(ArrayLookup n) {
+        n.e1.accept(this);
+        n.e2.accept(this);
+        expectType(n.e1, ARRAY);
+        expectType(n.e2, INT);
+        n.type = INT;
+    }
 
     // Exp e;
-    public void visit(ArrayLength n) {}
+    public void visit(ArrayLength n) {
+        n.e.accept(this);
+        expectType(n.e, INT);
+        n.type = INT;
+    }
 
     // Exp e;
     // Identifier i;
@@ -174,7 +217,9 @@ public class TypeChecker implements Visitor {
     public void visit(This n) {}
 
     // Exp e;
-    public void visit(NewArray n) {}
+    public void visit(NewArray n) {
+        n.type = ARRAY;
+    }
 
     // Identifier i;
     public void visit(NewObject n) {}
