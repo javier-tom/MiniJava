@@ -84,7 +84,8 @@ public class FillSymbolTables implements Visitor {
     // Type t;
     // Identifier i;
     public void visit(VarDecl n) {
-        String t = getType(n.t);
+        String s = getType(n.t);
+        Symbols.Type t = new Symbols.Type(n.i.s, s, classes);
         if (currMethod != null) {
             currMethod.locals.put(n.i.s, t);
         } else {
@@ -110,7 +111,7 @@ public class FillSymbolTables implements Visitor {
             n.vl.get(i).accept(this);
         }
 
-        currMethod.returnType = getType(n.t);
+        currMethod.returnType = new Symbols.Type(null, getType(n.t), classes);
         currClass.methods.put(n.i.s, currMethod);
         currMethod = null;
     }
@@ -118,7 +119,8 @@ public class FillSymbolTables implements Visitor {
     // Type t;
     // Identifier i;
     public void visit(Formal n) {
-        String t = getType(n.t);
+        String s = getType(n.t);
+        Symbols.Type t = new Symbols.Type(n.i.s, s, classes);
         currMethod.params.add(t);
     }
 

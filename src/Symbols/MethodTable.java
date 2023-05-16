@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 public class MethodTable {
-    public List<String> params = new ArrayList<>();
-    public Map<String, String> locals = new HashMap<>();
+    public List<Type> params = new ArrayList<>();
+    public Map<String, Type> locals = new HashMap<>();
     public String name;
-    public String returnType;
+    public Type returnType;
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -25,7 +25,7 @@ public class MethodTable {
         sb.append("\n    returns: ").append(returnType);
         sb.append("\n    locals:\n");
         for (String s: locals.keySet()) {
-            String t = locals.get(s);
+            Type t = locals.get(s);
             sb.append("      ");
             sb.append(t);
             sb.append(" ");

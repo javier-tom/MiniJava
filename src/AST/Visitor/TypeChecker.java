@@ -84,7 +84,8 @@ public class TypeChecker implements Visitor {
     // Type t;
     // Identifier i;
     public void visit(VarDecl n) {
-        String t = getType(n.t);
+        String s = getType(n.t);
+        Symbols.Type t = new Symbols.Type(n.i.s, s, classes);
         if (currMethod != null) {
             currMethod.locals.put(n.i.s, t);
         } else {

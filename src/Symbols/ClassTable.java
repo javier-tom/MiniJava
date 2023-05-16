@@ -5,9 +5,10 @@ import java.util.Map;
 
 public class ClassTable {
     public Map<String, MethodTable> methods = new HashMap<>();
-    public Map<String, String> fields = new HashMap<>();
+    public Map<String, Type> fields = new HashMap<>();
     public String superClass;
     public String name;
+    public Type type;
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -19,7 +20,7 @@ public class ClassTable {
         sb.append("\n");
         sb.append("  fields:\n");
         for (String s: fields.keySet()) {
-            String t = fields.get(s);
+            Type t = fields.get(s);
             sb.append("    ");
             sb.append(t);
             sb.append(" ");
