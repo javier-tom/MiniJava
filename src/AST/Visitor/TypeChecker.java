@@ -3,28 +3,22 @@ package AST.Visitor;
 import AST.*;
 import Symbols.ClassTable;
 import Symbols.MethodTable;
+import Symbols.Type;
 
 import java.util.Map;
 
 public class TypeChecker implements Visitor {
     private Map<String, ClassTable> classes;
-    private ClassTable currClass = null;
-    private MethodTable currMethod = null;
+    private final Symbols.Type INT;
+    private MethodTable scope;
 
     public TypeChecker(Map<String, ClassTable> classes) {
         this.classes = classes;
+        INT = new Type(null, "int", classes);
     }
 
     // Display added for toy example language.  Not used in regular MiniJava
     public void visit(Display n) {}
-
-    private String getType(Type t) {
-        if (t instanceof IntegerType) return "int";
-        else if (t instanceof IntArrayType) return "int[]";
-        else if (t instanceof BooleanType) return "boolean";
-        else if (t instanceof IdentifierType) return ((IdentifierType) t).s;
-        else return "*error";
-    }
 
     // MainClass m;
     // ClassDeclList cl;
@@ -38,26 +32,17 @@ public class TypeChecker implements Visitor {
     // Identifier i1,i2;
     // Statement s;
     public void visit(MainClass n) {
-        classes.put(n.i1.s, null);
+        // Typecheck return expression
+        n.s.accept(this);
     }
 
     // Identifier i;
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
-        currClass = new ClassTable();
-        currClass.name = n.i.s;
-
-        for ( int i = 0; i < n.vl.size(); i++ ) {
-            n.vl.get(i).accept(this);
-        }
-
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.get(i).accept(this);
         }
-
-        classes.put(n.i.s, currClass);
-        currClass = null;
     }
 
     // Identifier i;
@@ -65,33 +50,14 @@ public class TypeChecker implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
-        currClass = new ClassTable();
-        currClass.name = n.i.s;
-        currClass.superClass = n.j.s;
-
-        for ( int i = 0; i < n.vl.size(); i++ ) {
-            n.vl.get(i).accept(this);
-        }
-
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.get(i).accept(this);
         }
-
-        classes.put(n.i.s, currClass);
-        currClass = null;
     }
 
     // Type t;
     // Identifier i;
-    public void visit(VarDecl n) {
-        String s = getType(n.t);
-        Symbols.Type t = new Symbols.Type(n.i.s, s, classes);
-        if (currMethod != null) {
-            currMethod.locals.put(n.i.s, t);
-        } else {
-            currClass.fields.put(n.i.s, t);
-        }
-    }
+    public void visit(VarDecl n) {}
 
     // Type t;
     // Identifier i;
@@ -100,46 +66,31 @@ public class TypeChecker implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
-        currMethod = new MethodTable();
-        currMethod.name = n.i.s;
-
-        for (int i = 0; i < n.fl.size(); i++) {
-            n.fl.get(i).accept(this);
+        for (int i = 0; i < n.sl.size(); i++) {
+            n.sl.get(i).accept(this);
         }
-
-        for (int i = 0; i < n.vl.size(); i++) {
-            n.vl.get(i).accept(this);
-        }
-
-        currMethod.returnType = getType(n.t);
-        currClass.methods.put(n.i.s, currMethod);
-        currMethod = null;
+        n.e.accept(this);
     }
 
     // Type t;
     // Identifier i;
-    public void visit(Formal n) {
-        String t = getType(n.t);
-        currMethod.params.add(t);
-    }
+    public void visit(Formal n) {}
 
-    public void visit(IntArrayType n) {
-        System.out.print("int[]");
-    }
+    public void visit(IntArrayType n) {}
 
-    public void visit(BooleanType n) {
-        System.out.print("boolean");
-    }
+    public void visit(BooleanType n) {}
 
-    public void visit(IntegerType n) {
-        System.out.print("int");
-    }
+    public void visit(IntegerType n) {}
 
     // String s;
     public void visit(IdentifierType n) {}
 
     // StatementList sl;
-    public void visit(Block n) {}
+    public void visit(Block n) {
+        for (int i = 0; i < n.sl.size(); i++) {
+            n.sl.get(i).accept(this);
+        }
+    }
 
     // Exp e;
     // Statement s1,s2;
@@ -170,7 +121,17 @@ public class TypeChecker implements Visitor {
     public void visit(Plus n) {}
 
     // Exp e1,e2;
-    public void visit(Minus n) {}
+    public void visit(Minus n) {
+        n.e1.accept(this);
+        n.e2.accept(this);
+        if (!n.e1.type.sameType(INT)) {
+            System.err.println("Line " + n.line_number + ", expected type int. Got type " + n.e1.type);
+        }
+        if (!n.e2.type.sameType(INT)) {
+            System.err.println("Line " + n.line_number + ", expected type int. Got type " + n.e2.type);
+        }
+        n.type = new Symbols.Type(null, "int", classes);
+    }
 
     // Exp e1,e2;
     public void visit(Times n) {}

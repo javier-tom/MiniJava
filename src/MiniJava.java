@@ -120,9 +120,11 @@ public class MiniJava {
             // Go up through the superclasses of each class, and make sure there
             // are no cycles
             ClassTable ct = e.getValue();
+            if (ct == null) continue; // main class
             visited.clear();
             visited.add(e.getKey());
-            String superClass = e.getValue().superClass;
+            visited.add("*error");
+            String superClass = ct.superClass;
             while (superClass != null) {
                 if (visited.contains(superClass)) {
                     // Cycle detected
