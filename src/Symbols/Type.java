@@ -32,6 +32,13 @@ public class Type {
         return false;
     }
 
+    /**
+     * Return true iff the underlying type is the same
+     */
+    public boolean sameType(Type o) {
+        return o.type.equals(this.type);
+    }
+
     public String toString() {
         return type;
     }

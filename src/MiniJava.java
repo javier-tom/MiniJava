@@ -8,11 +8,15 @@ import Parser.parser;
 import Parser.sym;
 import Scanner.*;
 import Symbols.ClassTable;
+import Symbols.MethodTable;
 import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.Symbol;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 public class MiniJava {
     private static void usage() {
@@ -87,6 +91,7 @@ public class MiniJava {
                 Symbol sym = p.parse();
                 Program program = (Program)sym.value;
                 program.accept(new FillSymbolTables(classes));
+                checkSymbolTable(classes);
             } catch (Exception e) {
                 System.err.println(e);
                 e.printStackTrace();
@@ -102,5 +107,70 @@ public class MiniJava {
             usage();
         }
         System.exit(0);
+    }
+
+    /**
+     * Makes sure there are no dependency cycles in the symbol table, and
+     * verifies the method overrides are correct
+     * @param table the symbol table
+     */
+    private static void checkSymbolTable(Map<String, ClassTable> table) {
+        Set<String> visited = new HashSet<>();
+        for (Entry<String, ClassTable> e: table.entrySet()) {
+            // Go up through the superclasses of each class, and make sure there
+            // are no cycles
+            ClassTable ct = e.getValue();
+            visited.clear();
+            visited.add(e.getKey());
+            String superClass = e.getValue().superClass;
+            while (superClass != null) {
+                if (visited.contains(superClass)) {
+                    // Cycle detected
+                    ct.superClass = "*error";
+                    System.err.println("Inheritance cycle detected for class " + e.getKey());
+                    break;
+                } else {
+                    // Check any method overrides and copy superclass methods into
+                    // this class table
+                    ClassTable sup = table.get(superClass);
+                    checkOverrides(sup, ct);
+                    visited.add(superClass);
+                    superClass = table.get(superClass).superClass;
+                }
+            }
+        }
+    }
+
+    /**
+     * Fills method table in subclass with methods from superclass, and checks
+     * overrides at the same time
+     * @param sup superclass
+     * @param sub subclass
+     */
+    private static void checkOverrides(ClassTable sup, ClassTable sub) {
+        for (Entry<String, MethodTable> e: sup.methods.entrySet()) {
+            if (sub.methods.containsKey(e.getKey())) {
+                MethodTable aTable = e.getValue();
+                MethodTable bTable = sub.methods.get(e.getKey());
+
+                // Parameters and return type must match
+                if (!aTable.returnType.sameType(bTable.returnType)
+                    || aTable.params.size() != bTable.params.size()) {
+                    System.err.println("Method " + e.getKey() + " is not a valid override "
+                        + "in class " + sub.name);
+                    continue;
+                }
+
+                for (int i = 0; i < aTable.params.size(); i++) {
+                    if (!aTable.params.get(i).sameType(bTable.params.get(i))) {
+                        System.err.println("Method " + e.getKey() + " is not a valid override "
+                        + "in class " + sub.name);
+                        break;
+                    }
+                }
+            } else {
+                sub.methods.put(e.getKey(), e.getValue());
+            }
+        }
     }
 }

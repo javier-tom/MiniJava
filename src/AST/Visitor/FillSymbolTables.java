@@ -112,6 +112,7 @@ public class FillSymbolTables implements Visitor {
         }
 
         currMethod.returnType = new Symbols.Type(null, getType(n.t), classes);
+        currMethod.className = currClass.name;
         currClass.methods.put(n.i.s, currMethod);
         currMethod = null;
     }

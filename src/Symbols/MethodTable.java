@@ -9,6 +9,7 @@ public class MethodTable {
     public List<Type> params = new ArrayList<>();
     public Map<String, Type> locals = new HashMap<>();
     public String name;
+    public String className;
     public Type returnType;
 
     public String toString() {
