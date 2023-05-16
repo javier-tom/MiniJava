@@ -290,7 +290,9 @@ public class TypeChecker implements Visitor {
 
     // Exp e;
     public void visit(NewArray n) {
-        n.type = ARRAY;
+        n.e.accept(this);
+        expectType(n.e, INT);
+        n.type = INT;
     }
 
     // Identifier i;
