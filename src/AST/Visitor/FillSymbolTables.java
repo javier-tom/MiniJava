@@ -56,6 +56,7 @@ public class FillSymbolTables implements Visitor {
             n.ml.get(i).accept(this);
         }
 
+        currClass.type = new Symbols.Type(null, n.i.s, classes);
         classes.put(n.i.s, currClass);
         currClass = null;
     }
@@ -77,6 +78,7 @@ public class FillSymbolTables implements Visitor {
             n.ml.get(i).accept(this);
         }
 
+        currClass.type = new Symbols.Type(null, n.i.s, classes);
         classes.put(n.i.s, currClass);
         currClass = null;
     }

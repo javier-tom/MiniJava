@@ -324,7 +324,10 @@ public class TypeChecker implements Visitor {
         // Make sure is an acutal class
         if (!classes.containsKey(n.i.s)) {
             System.err.println("Error on line " + n.line_number + ": unknown class " + n.i.s);
+            n.type = new Type(null, "*error", classes);
+            return;
         }
+        n.type = classes.get(n.i.s).type;
     }
 
     // Exp e;

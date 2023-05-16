@@ -4,6 +4,7 @@ import AST.Program;
 import AST.Visitor.ASTDump;
 import AST.Visitor.FillSymbolTables;
 import AST.Visitor.PrettyPrintVisitor;
+import AST.Visitor.TypeChecker;
 import Parser.parser;
 import Parser.sym;
 import Scanner.*;
@@ -92,17 +93,19 @@ public class MiniJava {
                 Program program = (Program)sym.value;
                 program.accept(new FillSymbolTables(classes));
                 checkSymbolTable(classes);
+                // Dump symbol tables
+                for (String s: classes.keySet()) {
+                    if (classes.get(s) != null)
+                        System.out.println(classes.get(s));
+                }
+                program.accept(new TypeChecker(classes));
             } catch (Exception e) {
                 System.err.println(e);
                 e.printStackTrace();
                 System.exit(1);
             }
 
-            // Dump symbol tables
-            for (String s: classes.keySet()) {
-                if (classes.get(s) != null)
-                    System.out.println(classes.get(s));
-            }
+            
         } else {
             usage();
         }
