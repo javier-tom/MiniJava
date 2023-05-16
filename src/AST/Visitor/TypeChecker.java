@@ -10,11 +10,20 @@ import java.util.Map;
 public class TypeChecker implements Visitor {
     private Map<String, ClassTable> classes;
     private final Symbols.Type INT;
+    private final Symbols.Type BOOL;
     private MethodTable scope;
+
+    private void expectType(Exp n, Type expected) {
+        if (!n.type.sameType(expected)) {
+            System.err.println("Error on line " + n.line_number + ": expected type "
+                + expected + ". Got type " + n.type);
+        }
+    }
 
     public TypeChecker(Map<String, ClassTable> classes) {
         this.classes = classes;
         INT = new Type(null, "int", classes);
+        BOOL = new Type(null, "boolean", classes);
     }
 
     // Display added for toy example language.  Not used in regular MiniJava
@@ -130,7 +139,7 @@ public class TypeChecker implements Visitor {
         if (!n.e2.type.sameType(INT)) {
             System.err.println("Line " + n.line_number + ", expected type int. Got type " + n.e2.type);
         }
-        n.type = new Symbols.Type(null, "int", classes);
+        n.type = INT;
     }
 
     // Exp e1,e2;
@@ -148,11 +157,17 @@ public class TypeChecker implements Visitor {
     public void visit(Call n) {}
 
     // int i;
-    public void visit(IntegerLiteral n) {}
+    public void visit(IntegerLiteral n) {
+        n.type = INT;
+    }
 
-    public void visit(True n) {}
+    public void visit(True n) {
+        n.type = BOOL;
+    }
 
-    public void visit(False n) {}
+    public void visit(False n) {
+        n.type = BOOL;
+    }
 
     // String s;
     public void visit(IdentifierExp n) {}
@@ -166,7 +181,11 @@ public class TypeChecker implements Visitor {
     public void visit(NewObject n) {}
 
     // Exp e;
-    public void visit(Not n) {}
+    public void visit(Not n) {
+        n.e.accept(this);
+        expectType(n.e, BOOL);
+        n.type = BOOL;
+    }
 
     // String s;
     public void visit(Identifier n) {}
