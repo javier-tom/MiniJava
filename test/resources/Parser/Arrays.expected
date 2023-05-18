@@ -56,11 +56,11 @@ Program
             1 (line 23)
       While (line 24)
         condition:
-          Minus (line 24)
-            0 (line 24)
-            LessThan (line 24)
+          LessThan (line 24)
+            Minus (line 24)
+              0 (line 24)
               1 (line 24)
-              i (line 24)
+            i (line 24)
         ArrayAssign arr (line 25)
           index:
             i (line 25)

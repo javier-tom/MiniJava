@@ -54,11 +54,12 @@ nonterminal Identifier Identifier;
 
 /* Precedence declarations: */
 
+precedence left AND;
+precedence left LESS_THAN;
 precedence left PLUS, MINUS;
 precedence left TIMES;
-precedence left LESS_THAN;
-precedence left AND;
 precedence left NOT;
+precedence left LSQUARE;
 precedence left DOT;
 
 
