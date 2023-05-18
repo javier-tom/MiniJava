@@ -81,4 +81,9 @@ public class TestSemantics {
     public void testBrokenLogic() {
         runSemanticsTestCaseWithErr("BrokenLogic");
     }
+
+    @Test
+    public void testSubclassAssign() {
+        runSemanticsTestCaseWithErr("SubclassAssign");
+    }
 }
