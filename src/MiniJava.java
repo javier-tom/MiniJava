@@ -51,8 +51,8 @@ public class MiniJava {
         // The interesting part of the compiler. Scan, parse, typecheck, and compile
         // the program.
         int exitCode = 0;
-        boolean valid = true;
         try {
+            boolean valid = true;
             if (args[0].contains("S")) {
                 Symbol t = scanner.next_token();
 
@@ -99,11 +99,15 @@ public class MiniJava {
             }
             
             // And now type check it
-            program.accept(new TypeChecker(classes));
+            TypeChecker tc = new TypeChecker(classes);
+            program.accept(tc);
+            if (!tc.getStatus()) {
+                exitCode = 1;
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            exitCode = 1;
         }
-        if (!valid) exitCode = 1;
         System.exit(exitCode);
     }
 

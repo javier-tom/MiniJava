@@ -16,9 +16,18 @@ public class TypeChecker implements Visitor {
 
     private MethodTable scope;
     private ClassTable currClass;
+    private int numErrors = 0;
+
+    /**
+     * Returns true if there hasn't been any errors in type checking
+     */
+    public boolean getStatus() {
+        return numErrors == 0;
+    }
 
     private void errorLine(ASTNode n, String desc) {
         System.err.println("Error on line " + n.line_number + ": " + desc);
+        numErrors++;
     }
 
     private void expectType(Exp n, Type expected) {
