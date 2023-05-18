@@ -26,6 +26,30 @@ public class TypeChecker implements Visitor {
         }
     }
 
+    private Type findVar(String name, ASTNode line_number) {
+        Type t = scope.locals.get(name);
+        if (t == null) {
+            for (Type t1 : scope.params) {
+                if (name.equals(t1.varName)) {
+                    return t1;
+                }
+            }
+        }
+        if (t == null) {
+            // Check in class hierarchy
+            ClassTable tmp = currClass;
+            while (tmp != null && t == null) {
+                t = tmp.fields.get(name);
+                tmp = classes.get(tmp.superClass);
+            }
+            if (t == null) {
+                errorLine(line_number, "unknown variable " + name);
+                return new Type("", "*error", classes);
+            }
+        }
+        return t;
+    }
+
     public TypeChecker(Map<String, ClassTable> classes) {
         this.classes = classes;
         INT = new Type(null, "int", classes);
@@ -138,19 +162,7 @@ public class TypeChecker implements Visitor {
     // Exp e;
     public void visit(Assign n) {
         // Get type of variable
-        Type t = scope.locals.get(n.i.s);
-        if (t == null) {
-            // Check in class hierarchy
-            ClassTable tmp = currClass;
-            while (tmp != null && t == null) {
-                t = tmp.fields.get(n.i.s);
-                tmp = classes.get(tmp.superClass);
-            }
-            if (t == null) {
-                errorLine(n, "unknown variable " + n.i.s);
-                return;
-            }
-        }
+        Type t = findVar(n.i.s, n);
         n.e.accept(this);
         if (!t.isAssignable(n.e.type)) {
             errorLine(n, "cannot assign " + n.e.type + " to a " + t);
@@ -165,24 +177,7 @@ public class TypeChecker implements Visitor {
         n.e2.accept(this);
         expectType(n.e2, INT);
 
-        Type t = scope.locals.get(n.i.s);
-        if (t == null) {
-            // Check in class hierarchy
-            ClassTable tmp = currClass;
-            while (tmp != null && t == null) {
-                t = tmp.fields.get(n.i.s);
-                tmp = classes.get(tmp.superClass);
-                if (tmp.superClass.equals("*error")) {
-                    break;
-                }
-            }
-            t = currClass.fields.get(n.i.s);
-            if (t == null) {
-                errorLine(n, "unknown variable " + n.i.s);
-                return;
-            }
-        }
-
+        Type t = findVar(n.i.s, n);
         if (!t.sameType(ARRAY)) {
             errorLine(n, "expected type " + ARRAY + ". Got type " + t);
         }
@@ -298,27 +293,7 @@ public class TypeChecker implements Visitor {
 
     // String s;
     public void visit(IdentifierExp n) {
-        Type t = scope.locals.get(n.s);
-        if (t == null) {
-            for (Type t1 : scope.params) {
-                if (n.s.equals(t1.varName)) {
-                    n.type = t1;
-                    return;
-                }
-            }
-        }
-        if (t == null) {
-            // Check in class hierarchy
-            ClassTable tmp = currClass;
-            while (tmp != null && t == null) {
-                t = tmp.fields.get(n.s);
-                tmp = classes.get(tmp.superClass);
-            }
-            if (t == null) {
-                errorLine(n, "unknown variable " + n.s);
-            }
-        }
-        n.type = t;
+        n.type = findVar(n.s, n);
     }
 
     public void visit(This n) {
