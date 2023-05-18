@@ -95,7 +95,7 @@ public class MiniJava {
             // And now type check it
             program.accept(new TypeChecker(classes));
         } catch (Exception e) {
-            exitCode = 1;
+            e.printStackTrace();
         }
         if (!valid) exitCode = 1;
         System.exit(exitCode);
