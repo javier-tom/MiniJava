@@ -68,7 +68,13 @@ public class MiniJava {
                 // the test cases failing from too many error messages
                 System.exit(!valid ? 1 : 0);
             }
+        } catch (IOException e) {
+            // IOException so the System.exit doesn't get caught
+            e.printStackTrace();
+            System.exit(1);
+        }
 
+        try {
             // Keep going through the stages
             // Parse next
             parser p = new parser(scanner, sf);
