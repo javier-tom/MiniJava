@@ -246,7 +246,7 @@ public class TypeChecker implements Visitor {
     public void visit(ArrayLength n) {
         n.e.accept(this);
         expectType(n.e, ARRAY);
-        n.type = INT;
+        n.type = ARRAY;
     }
 
     // Exp e;
@@ -295,10 +295,19 @@ public class TypeChecker implements Visitor {
 
     // String s;
     public void visit(IdentifierExp n) {
-        if (classes.get(n.s) == null) {
-            System.err.println("Error on line " + n.line_number + ": invalid class " + n.s);
+        Type t = scope.locals.get(n.s);
+        if (t == null) {
+            // Check in class hierarchy
+            ClassTable tmp = currClass;
+            while (tmp != null && t == null) {
+                t = tmp.fields.get(n.s);
+                tmp = classes.get(tmp.superClass);
+            }
+            if (t == null) {
+                return;
+            }
         }
-        n.type = classes.get(n.s).type;
+        n.type = t;
     }
 
     public void visit(This n) {
