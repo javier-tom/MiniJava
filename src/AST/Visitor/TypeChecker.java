@@ -16,10 +16,13 @@ public class TypeChecker implements Visitor {
     private MethodTable scope;
     private ClassTable currClass;
 
+    private void errorLine(ASTNode n, String desc) {
+        System.err.println("Error on line " + n.line_number + ": " + desc);
+    }
+
     private void expectType(Exp n, Type expected) {
         if (!n.type.sameType(expected)) {
-            System.err.println("Error on line " + n.line_number + ": expected type "
-                + expected + ". Got type " + n.type);
+            errorLine(n, "expected type " + expected + ". Got type " + n.type);
         }
     }
 
@@ -142,20 +145,15 @@ public class TypeChecker implements Visitor {
             while (tmp != null && t == null) {
                 t = tmp.fields.get(n.i.s);
                 tmp = classes.get(tmp.superClass);
-                if (tmp.superClass.equals("*error")) {
-                    break;
-                }
             }
             if (t == null) {
-                System.err.println("Error on line " + n.line_number + ": unknown variable "
-                    + n.i.s);
+                errorLine(n, "unknown variable " + n.i.s);
                 return;
             }
         }
         n.e.accept(this);
         if (!t.isAssignable(n.e.type)) {
-            System.err.println("Error on line " + n.line_number + ": "
-                    + "cannot assign " + n.e.type + " to a " + t);
+            errorLine(n, "cannot assign " + n.e.type + " to a " + t);
         }
     }
 
@@ -180,15 +178,13 @@ public class TypeChecker implements Visitor {
             }
             t = currClass.fields.get(n.i.s);
             if (t == null) {
-                System.err.println("Error on line " + n.line_number + ": unknown variable "
-                    + n.i.s);
+                errorLine(n, "unknown variable " + n.i.s);
                 return;
             }
         }
 
         if (!t.sameType(ARRAY)) {
-            System.err.println("Error on line " + n.line_number + ": expected type "
-                + ARRAY + ". Got type " + t);
+            errorLine(n, "expected type " + ARRAY + ". Got type " + t);
         }
     }
 
@@ -262,16 +258,14 @@ public class TypeChecker implements Visitor {
         if (n.e.type == null) return;
         ClassTable ct = n.e.type.getClassTable();
         if (ct == null) {
-            System.err.print("Error on line " + n.line_number + ": ");
-            System.err.print(n.e.type + " is not a class.");
+            errorLine(n, n.e.type + " is not a class.");
             return;
         }
 
         MethodTable m = ct.methods.get(n.i.s);
         if (m.params.size() != n.el.size()) {
-            System.err.print("Error on line " + n.line_number + ": ");
-            System.err.print("expected " + m.params.size() + " arguments, ");
-            System.err.println("got " + n.el.size() + " instead.");
+            errorLine(n, "expected " + m.params.size() +
+                " arguments, got " + n.el.size() + " instead.");
             return;
         }
 
@@ -280,8 +274,7 @@ public class TypeChecker implements Visitor {
             Exp param = n.el.get(i);
             param.accept(this);
             if (!m.params.get(i).isAssignable(param.type)) {
-                System.err.print("Error on line " + n.line_number + ": "
-                    + "expected type " + m.params.get(i) + "in parameter " + (i + 1)
+                errorLine(n, "expected type " + m.params.get(i) + "in parameter " + (i + 1)
                     + " of the call to " + n.i.s + ". Got type " + param.type + " instead.");
             }
         }
@@ -323,7 +316,7 @@ public class TypeChecker implements Visitor {
     public void visit(NewObject n) {
         // Make sure is an acutal class
         if (!classes.containsKey(n.i.s)) {
-            System.err.println("Error on line " + n.line_number + ": unknown class " + n.i.s);
+            errorLine(n, "unknown class " + n.i.s);
             n.type = new Type(null, "*error", classes);
             return;
         }
