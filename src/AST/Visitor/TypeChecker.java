@@ -21,7 +21,7 @@ public class TypeChecker implements Visitor {
     }
 
     private void expectType(Exp n, Type expected) {
-        if (!n.type.sameType(expected)) {
+        if (!expected.sameType(n.type)) {
             errorLine(n, "expected type " + expected + ". Got type " + n.type);
         }
     }
@@ -266,6 +266,7 @@ public class TypeChecker implements Visitor {
         if (m.params.size() != n.el.size()) {
             errorLine(n, "expected " + m.params.size() +
                 " arguments, got " + n.el.size() + " instead.");
+            n.type = new Type("", "*error", classes);
             return;
         }
 
@@ -278,6 +279,8 @@ public class TypeChecker implements Visitor {
                     + " of the call to " + n.i.s + ". Got type " + param.type + " instead.");
             }
         }
+
+        n.type = m.returnType;
     }
 
     // int i;
