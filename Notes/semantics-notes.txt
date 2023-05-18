@@ -1,0 +1,7 @@
+We designed and implemented the ClassTable, MethodTable, and Type class together in the Symbols folder.
+David implemented most of the logic for the FillSymbolTable class located in the AST/Visitor folder.
+The two of use worked on implementing parts of TypeChecker.java separately and coming together in
+the end to make sure all Exp were getting the correct type.
+We added an extra field into Exp.java to keep track of the ASTNodes' type.
+David set up the test runner class and made changes to MiniJava.java to be more modular.
+
