@@ -21,13 +21,21 @@ import java.util.Map.Entry;
 
 public class MiniJava {
     private static void usage() {
-        System.out.println("USAGE: MiniJava -S [filename]");
+        System.out.println("USAGE: MiniJava -[ASTP] [filename]");
         System.exit(1);
     }
 
     public static void main (String[] args) {
-        if (args.length != 2) {
+        if (args.length != 2 || args[0].length() <= 1) {
             usage();
+        }
+
+        // Check arguments
+        for (int i = 1; i < args[0].length(); i++) {
+            char c = args[0].charAt(i);
+            if (c != 'A' && c != 'S' && c != 'T' && c != 'P') {
+                usage();
+            }
         }
 
         FileReader f = null;
@@ -40,12 +48,12 @@ public class MiniJava {
         Reader in = new BufferedReader(f);
         scanner scanner = new scanner(in, sf);
 
-        if (args[0].equals("-S")) {
-            // Scanner
-            // System.exit doesn't work right in a try, so workaround
-            int exitCode = 0;
-            boolean valid = true;
-            try {
+        // The interesting part of the compiler. Scan, parse, typecheck, and compile
+        // the program.
+        int exitCode = 0;
+        boolean valid = true;
+        try {
+            if (args[0].contains("S")) {
                 Symbol t = scanner.next_token();
 
                 while (t.sym != sym.EOF) {
@@ -55,61 +63,42 @@ public class MiniJava {
                     }
                     t = scanner.next_token();
                 }
-            } catch (Exception e) {
-                System.err.println(e);
-                e.printStackTrace();
-                exitCode = 1;
+
+                // Scanner tests are all invalid programs, so exit now to avoid
+                // the test cases failing from too many error messages
+                System.exit(!valid ? 1 : 0);
             }
-            if (!valid) exitCode = 1;
-            System.exit(exitCode);
-        } else if (args[0].equals("-A")) {
+
+            // Keep going through the stages
+            // Parse next
             parser p = new parser(scanner, sf);
-            try {
-                Symbol sym = p.parse();
-                Program program = (Program)sym.value;
+            Program program = (Program)p.parse().value;
+            if (args[0].contains("A")) {
                 program.accept(new ASTDump());
-            } catch (Exception e) {
-                System.err.println(e);
-                e.printStackTrace();
-                System.exit(1);
             }
-        } else if (args[0].equals("-P")) {
-            parser p = new parser(scanner, sf);
-            try {
-                Symbol sym = p.parse();
-                Program program = (Program)sym.value;
+            if (args[0].contains("P")) {
                 program.accept(new PrettyPrintVisitor());
-            } catch (Exception e) {
-                System.err.println(e);
-                e.printStackTrace();
-                System.exit(1);
             }
-        } else if (args[0].equals("-T")) {
-            // Fill symbol tables
+
+            // Now do semantics: fill symbol tables and verify them
             Map<String, ClassTable> classes = new HashMap<>();
-            parser p = new parser(scanner, sf);
-            try {
-                Symbol sym = p.parse();
-                Program program = (Program)sym.value;
-                program.accept(new FillSymbolTables(classes));
-                checkSymbolTable(classes);
+            program.accept(new FillSymbolTables(classes));
+            checkSymbolTable(classes);
+            if (args[0].contains("T")) {
                 // Dump symbol tables
                 for (String s: classes.keySet()) {
                     if (classes.get(s) != null)
                         System.out.println(classes.get(s));
                 }
-                program.accept(new TypeChecker(classes));
-            } catch (Exception e) {
-                System.err.println(e);
-                e.printStackTrace();
-                System.exit(1);
             }
-
             
-        } else {
-            usage();
+            // And now type check it
+            program.accept(new TypeChecker(classes));
+        } catch (Exception e) {
+            exitCode = 1;
         }
-        System.exit(0);
+        if (!valid) exitCode = 1;
+        System.exit(exitCode);
     }
 
     /**

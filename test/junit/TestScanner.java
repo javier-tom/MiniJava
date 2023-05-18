@@ -38,6 +38,7 @@ public class TestScanner {
                     .assertSystemErrMatchesContentsOf(
                             Path.of(TEST_FILES_LOCATION,
                                     testCaseName + TEST_FILES_ERROR_EXTENSION))
+                    .assertExitsWith(1)
                     .testCompiler("-S", TEST_FILES_LOCATION + testCaseName + TEST_FILES_INPUT_EXTENSION);
         } catch (IOException e) {
             fail(e.getMessage());
