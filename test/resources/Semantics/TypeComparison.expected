@@ -1,0 +1,23 @@
+class TypeCompare:
+  super: null
+  fields:
+    int[] arr;
+    int a;
+    int b;
+    int c;
+    boolean flag;
+  method secondRun:
+    params: int, int,
+    returns: int
+    locals:
+  method run:
+    params: int, int,
+    returns: int
+    locals:
+
+Error on line 16: cannot assign int to a int[]
+Error on line 17: cannot assign int to a boolean
+Error on line 18: expected type intin parameter 2 of the call to secondRun. Got type boolean instead.
+Error on line 20: expected type int. Got type boolean
+Error on line 26: expected type int. Got type boolean
+Error on line 27: expected type int. Got type boolean

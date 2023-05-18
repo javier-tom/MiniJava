@@ -279,7 +279,7 @@ public class TypeChecker implements Visitor {
             Exp param = n.el.get(i);
             param.accept(this);
             if (!m.params.get(i).isAssignable(param.type)) {
-                errorLine(n, "expected type " + m.params.get(i) + "in parameter " + (i + 1)
+                errorLine(n, "expected type " + m.params.get(i) + " in parameter " + (i + 1)
                     + " of the call to " + n.i.s + ". Got type " + param.type + " instead.");
             }
         }

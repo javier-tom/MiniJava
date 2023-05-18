@@ -54,7 +54,22 @@ public class TestSemantics {
 
     @Test
     public void testInherit() {
-        runSemanticsTestCase("Inherit");
+        runSemanticsTestCaseWithErr("Inherit");
+    }
+
+    @Test
+    public void testTypeComparison() {
+        runSemanticsTestCaseWithErr("TypeComparison");
+    }
+
+    @Test
+    public void testScope() {
+        runSemanticsTestCaseWithErr("Scope");
+    }
+
+    @Test
+    public void testLogic() {
+        runSemanticsTestCaseWithErr("Logic");
     }
 
     @Test
