@@ -1,0 +1,22 @@
+class Operators:
+  super: null
+  fields:
+  method run:
+    params: 
+    returns: int
+    locals:
+      int[] arr;
+      boolean b;
+      int six;
+      Stuff s;
+      int i;
+      int five;
+
+class Stuff:
+  super: null
+  fields:
+  method x:
+    params: int, 
+    returns: boolean
+    locals:
+

@@ -56,4 +56,9 @@ public class TestSemantics {
     public void testInherit() {
         runSemanticsTestCase("Inherit");
     }
+
+    @Test
+    public void testOperators() {
+        runSemanticsTestCase("Operators");
+    }
 }
