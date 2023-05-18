@@ -246,7 +246,7 @@ public class TypeChecker implements Visitor {
     public void visit(ArrayLength n) {
         n.e.accept(this);
         expectType(n.e, ARRAY);
-        n.type = ARRAY;
+        n.type = INT;
     }
 
     // Exp e;
@@ -300,6 +300,14 @@ public class TypeChecker implements Visitor {
     public void visit(IdentifierExp n) {
         Type t = scope.locals.get(n.s);
         if (t == null) {
+            for (Type t1 : scope.params) {
+                if (n.s.equals(t1.varName)) {
+                    n.type = t1;
+                    return;
+                }
+            }
+        }
+        if (t == null) {
             // Check in class hierarchy
             ClassTable tmp = currClass;
             while (tmp != null && t == null) {
@@ -307,7 +315,7 @@ public class TypeChecker implements Visitor {
                 tmp = classes.get(tmp.superClass);
             }
             if (t == null) {
-                return;
+                errorLine(n, "unknown variable " + n.s);
             }
         }
         n.type = t;
@@ -321,7 +329,7 @@ public class TypeChecker implements Visitor {
     public void visit(NewArray n) {
         n.e.accept(this);
         expectType(n.e, INT);
-        n.type = INT;
+        n.type = ARRAY;
     }
 
     // Identifier i;
