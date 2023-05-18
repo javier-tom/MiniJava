@@ -4,4 +4,6 @@ The two of use worked on implementing parts of TypeChecker.java separately and c
 the end to make sure all Exp were getting the correct type.
 We added an extra field into Exp.java to keep track of the ASTNodes' type.
 David set up the test runner class and made changes to MiniJava.java to be more modular.
-
+While we were writing tests, we discovered a parser bug in the precedences of the
+various operators. This was the only bug that had to be fixed from the earlier
+phases of the project.
