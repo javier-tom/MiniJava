@@ -11,18 +11,28 @@ class Vars {
     boolean f2;
 
     public int run(int x, int y) { // x = 10, y = 15
-        if (x < y) { // true
+        if (true < 1) { // true
             f1 = this.whiles(a, y);
         } else {
+            if (false) {
 
+            } else {
+
+            }
         }
         return 1;
     }
 
-    public boolean run2(int a, int b) { // a = 0?, b = 15
+    public boolean whiles(int a, int b) { // a = 0?, b = 15
         int[] arr;
-        while (a < b) {
+        while (arr < b) {
             a = a + 1;
+        }
+        while (true){
+
+        }
+        while(1) {
+
         }
         arr = this.run3(a, b); // a = 15, b = 15
         return true;

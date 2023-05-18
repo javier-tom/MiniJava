@@ -69,11 +69,16 @@ public class TestSemantics {
 
     @Test
     public void testLogic() {
-        runSemanticsTestCaseWithErr("Logic");
+        runSemanticsTestCase("Logic");
     }
 
     @Test
     public void testOperators() {
         runSemanticsTestCase("Operators");
+    }
+
+    @Test
+    public void testBrokenLogic() {
+        runSemanticsTestCaseWithErr("BrokenLogic");
     }
 }
