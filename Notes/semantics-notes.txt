@@ -7,3 +7,6 @@ David set up the test runner class and made changes to MiniJava.java to be more 
 While we were writing tests, we discovered a parser bug in the precedences of the
 various operators. This was the only bug that had to be fixed from the earlier
 phases of the project.
+We tested our semantics and type check on the sample programs, pass all with no errors.
+We also wrote our own test case to test for edge case and fixing any bugs we missed initially.
+In the end all our tests ran with no unexpected errors.
