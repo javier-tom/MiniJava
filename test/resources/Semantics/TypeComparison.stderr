@@ -1,0 +1,6 @@
+Error on line 16: cannot assign int to a int[]
+Error on line 17: cannot assign int to a boolean
+Error on line 18: expected type int in parameter 2 of the call to secondRun. Got type boolean instead.
+Error on line 20: expected type int. Got type boolean
+Error on line 26: expected type int. Got type boolean
+Error on line 27: expected type int. Got type boolean
