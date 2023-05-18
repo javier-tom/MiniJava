@@ -19,7 +19,7 @@ class Vars {
         return 1;
     }
 
-    public boolean run2(int a, int b) { // a = 0?, b = 15
+    public boolean whiles(int a, int b) { // a = 0?, b = 15
         int[] arr;
         while (a < b) {
             a = a + 1;

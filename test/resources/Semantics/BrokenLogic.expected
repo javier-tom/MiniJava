@@ -7,20 +7,17 @@ class Vars:
     boolean f1;
     boolean f2;
   method whiles:
-    params: int, int,
+    params: int, int, 
     returns: boolean
     locals:
       int[] arr;
   method run:
-    params: int, int,
+    params: int, int, 
     returns: int
     locals:
   method run3:
-    params: int, int,
+    params: int, int, 
     returns: int[]
     locals:
       int[] arr;
 
-Error on line 14: expected type int. Got type boolean
-Error on line 28: expected type int. Got type int[]
-Error on line 34: expected type boolean. Got type int

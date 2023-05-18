@@ -54,7 +54,7 @@ public class TestSemantics {
 
     @Test
     public void testInherit() {
-        runSemanticsTestCaseWithErr("Inherit");
+        runSemanticsTestCase("Inherit");
     }
 
     @Test

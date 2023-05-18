@@ -6,17 +6,18 @@ class Vars:
     int c;
     boolean f1;
     boolean f2;
-  method run2:
-    params: int, int,
+  method whiles:
+    params: int, int, 
     returns: boolean
     locals:
       int[] arr;
   method run:
-    params: int, int,
+    params: int, int, 
     returns: int
     locals:
   method run3:
-    params: int, int,
+    params: int, int, 
     returns: int[]
     locals:
       int[] arr;
+

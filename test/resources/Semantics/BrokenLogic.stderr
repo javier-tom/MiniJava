@@ -1,0 +1,3 @@
+Error on line 14: expected type int. Got type boolean
+Error on line 28: expected type int. Got type int[]
+Error on line 34: expected type boolean. Got type int
