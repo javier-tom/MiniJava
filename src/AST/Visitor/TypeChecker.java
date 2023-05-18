@@ -115,6 +115,7 @@ public class TypeChecker implements Visitor {
             n.sl.get(i).accept(this);
         }
         n.e.accept(this);
+        expectType(n.e, scope.returnType);
     }
 
     // Type t;
