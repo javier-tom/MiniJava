@@ -12,6 +12,7 @@ public class TypeChecker implements Visitor {
     private final Symbols.Type INT;
     private final Symbols.Type BOOL;
     private final Symbols.Type ARRAY;
+    private final Symbols.Type ERR;
 
     private MethodTable scope;
     private ClassTable currClass;
@@ -44,7 +45,7 @@ public class TypeChecker implements Visitor {
             }
             if (t == null) {
                 errorLine(line_number, "unknown variable " + name);
-                return new Type("", "*error", classes);
+                return ERR;
             }
         }
         return t;
@@ -55,6 +56,7 @@ public class TypeChecker implements Visitor {
         INT = new Type(null, "int", classes);
         BOOL = new Type(null, "boolean", classes);
         ARRAY = new Type(null, "int[]", classes);
+        ERR = new Type(null, "*error", classes);
     }
 
     // Display added for toy example language.  Not used in regular MiniJava
@@ -258,10 +260,16 @@ public class TypeChecker implements Visitor {
         }
 
         MethodTable m = ct.methods.get(n.i.s);
+        if (m == null) {
+            errorLine(n, "method " + n.i.s + " does not exist.");
+            n.type = ERR;
+            return;
+        }
+
         if (m.params.size() != n.el.size()) {
             errorLine(n, "expected " + m.params.size() +
                 " arguments, got " + n.el.size() + " instead.");
-            n.type = new Type("", "*error", classes);
+            n.type = ERR;
             return;
         }
 
@@ -312,7 +320,7 @@ public class TypeChecker implements Visitor {
         // Make sure is an acutal class
         if (!classes.containsKey(n.i.s)) {
             errorLine(n, "unknown class " + n.i.s);
-            n.type = new Type(null, "*error", classes);
+            n.type = ERR;
             return;
         }
         n.type = classes.get(n.i.s).type;

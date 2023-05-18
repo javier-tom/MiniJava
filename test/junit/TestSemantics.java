@@ -23,6 +23,8 @@ public class TestSemantics {
                     .assertSystemOutMatchesContentsOf(
                             Path.of(TEST_FILES_LOCATION,
                                     testCaseName + TEST_FILES_EXPECTED_EXTENSION))
+                    .assertExitSuccess()
+                    .assertSystemErrIsEmpty()
                     .testCompiler("-T", TEST_FILES_LOCATION + testCaseName + TEST_FILES_INPUT_EXTENSION);
         } catch (IOException e) {
             fail(e.getMessage());
@@ -38,6 +40,7 @@ public class TestSemantics {
                     .assertSystemErrMatchesContentsOf(
                             Path.of(TEST_FILES_LOCATION,
                                     testCaseName + TEST_FILES_ERROR_EXTENSION))
+                    .assertExitFailure()
                     .testCompiler("-T", TEST_FILES_LOCATION + testCaseName + TEST_FILES_INPUT_EXTENSION);
         } catch (IOException e) {
             fail(e.getMessage());
@@ -51,6 +54,6 @@ public class TestSemantics {
 
     @Test
     public void testInherit() {
-        runSemanticsTestCase("Simple");
+        runSemanticsTestCase("Inherit");
     }
 }
