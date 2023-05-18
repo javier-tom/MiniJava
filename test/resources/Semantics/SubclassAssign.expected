@@ -1,0 +1,18 @@
+class A:
+  super: B
+  fields:
+
+class B:
+  super: null
+  fields:
+
+class SubclassAssign:
+  super: null
+  fields:
+  method run:
+    params: 
+    returns: int
+    locals:
+      A a;
+      B b;
+
