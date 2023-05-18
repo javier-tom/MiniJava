@@ -1,0 +1,7 @@
+class Simple:
+  super: null
+  fields:
+  method run:
+    params: 
+    returns: int
+    locals:
