@@ -1,0 +1,19 @@
+class A:
+  super: B
+  fields:
+  method run:
+    params:
+    returns: int
+    locals:
+  method whatever:
+    params: int,
+    returns: int
+    locals:
+
+class B:
+  super: null
+  fields:
+  method run:
+    params:
+    returns: int
+    locals:
