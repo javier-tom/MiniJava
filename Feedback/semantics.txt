@@ -1,0 +1,21 @@
+CSE 401 23sp Project III - Semantics
+
+Missing error report: an overridden method in a subclass must have the same argument type list as the superclass’s method. (-2)
+
+Missing error report:  catches inheritance cycles, but does not return 1.  (-2)
+
+Missing error report: classes cannot be declared more than once. (-2)
+
+Missing error report: fields of a class cannot be declared more than once. (-2)
+
+Missing error report: methods of a class cannot be declared more than once. (-2)
+
+Missing error report: variables in a method cannot be declared more than once. (-2)
+
+Missing error report: a method cannot take an undeclared type as an argument. For example, if class Bar is not defined, then ‘public int foo(Bar b)’ should fail type checking. (-2)
+
+Missing error report: superclass cannot be assigned to subclasses (i.e., no implicit downcasts are allowed in MiniJava). (-2)
+
+False error report: An object can be assigned a subclass of its type. (-2)
+
+Total: 64/82
