@@ -1,0 +1,26 @@
+class A:
+  super: null
+  fields:
+
+class B:
+  super: null
+  fields:
+  method run:
+    params: 
+    returns: int
+    locals:
+
+class C:
+  super: null
+  fields:
+  method stuff:
+    params: 
+    returns: int
+    locals:
+      int x;
+
+class D:
+  super: null
+  fields:
+    int x;
+

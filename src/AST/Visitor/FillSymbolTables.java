@@ -38,6 +38,7 @@ public class FillSymbolTables implements Visitor {
     // Identifier i1,i2;
     // Statement s;
     public void visit(MainClass n) {
+        // It's the first thing, so no need to check for duplicates
         classes.put(n.i1.s, null);
     }
 
@@ -45,6 +46,10 @@ public class FillSymbolTables implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
+        if (classes.containsKey(n.i.s)) {
+            Error.errorLine(n, "duplicate class " + n.i.s + " declared");
+            return;
+        }
         currClass = new ClassTable();
         currClass.name = n.i.s;
 
@@ -66,6 +71,10 @@ public class FillSymbolTables implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
+        if (classes.containsKey(n.i.s)) {
+            Error.errorLine(n, "duplicate class " + n.i.s + " declared");
+            return;
+        }
         currClass = new ClassTable();
         currClass.name = n.i.s;
         currClass.superClass = n.j.s;
@@ -89,8 +98,16 @@ public class FillSymbolTables implements Visitor {
         String s = getType(n.t);
         Symbols.Type t = new Symbols.Type(n.i.s, s, classes);
         if (currMethod != null) {
+            if (currMethod.locals.containsKey(n.i.s)) {
+                Error.errorLine(n, "duplicate variable " + n.i.s + " delcared");
+                return;
+            }
             currMethod.locals.put(n.i.s, t);
         } else {
+            if (currClass.fields.containsKey(n.i.s)) {
+                Error.errorLine(n, "duplicate field " + n.i.s + " delcared");
+                return;
+            }
             currClass.fields.put(n.i.s, t);
         }
     }
@@ -102,6 +119,10 @@ public class FillSymbolTables implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
+        if (currClass.methods.containsKey(n.i.s)) {
+            Error.errorLine(n, "duplicate method " + n.i.s + " declared");
+            return;
+        }
         currMethod = new MethodTable();
         currMethod.name = n.i.s;
 
@@ -127,17 +148,11 @@ public class FillSymbolTables implements Visitor {
         currMethod.params.add(t);
     }
 
-    public void visit(IntArrayType n) {
-        System.out.print("int[]");
-    }
+    public void visit(IntArrayType n) {}
 
-    public void visit(BooleanType n) {
-        System.out.print("boolean");
-    }
+    public void visit(BooleanType n) {}
 
-    public void visit(IntegerType n) {
-        System.out.print("int");
-    }
+    public void visit(IntegerType n) {}
 
     // String s;
     public void visit(IdentifierType n) {}

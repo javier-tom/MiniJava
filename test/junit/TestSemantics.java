@@ -91,4 +91,9 @@ public class TestSemantics {
     public void testNonexistentType() {
         runSemanticsTestCaseWithErr("NonexistentType");
     }
+
+    @Test
+    public void testDuplicates() {
+        runSemanticsTestCaseWithErr("Duplicates");
+    }
 }

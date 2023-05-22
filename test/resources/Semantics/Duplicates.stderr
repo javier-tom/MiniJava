@@ -1,0 +1,5 @@
+Error on line 8: duplicate class Main declared
+Error on line 14: duplicate class A declared
+Error on line 24: duplicate method run declared
+Error on line 32: duplicate variable x delcared
+Error on line 40: duplicate field x delcared

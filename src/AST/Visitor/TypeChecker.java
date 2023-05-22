@@ -16,23 +16,10 @@ public class TypeChecker implements Visitor {
 
     private MethodTable scope;
     private ClassTable currClass;
-    private int numErrors = 0;
-
-    /**
-     * Returns true if there hasn't been any errors in type checking
-     */
-    public boolean getStatus() {
-        return numErrors == 0;
-    }
-
-    private void errorLine(ASTNode n, String desc) {
-        System.err.println("Error on line " + n.line_number + ": " + desc);
-        numErrors++;
-    }
 
     private void expectType(Exp n, Type expected) {
         if (!expected.sameType(n.type)) {
-            errorLine(n, "expected type " + expected + ". Got type " + n.type);
+            Error.errorLine(n, "expected type " + expected + ". Got type " + n.type);
         }
     }
 
@@ -53,7 +40,7 @@ public class TypeChecker implements Visitor {
                 tmp = classes.get(tmp.superClass);
             }
             if (t == null) {
-                errorLine(line_number, "unknown variable " + name);
+                Error.errorLine(line_number, "unknown variable " + name);
                 return ERR;
             }
         }
@@ -63,7 +50,7 @@ public class TypeChecker implements Visitor {
     private void verifyExists(Type t, ASTNode line_number) {
         String name = t.toString(); // verifyExists overwrites the name on error
         if (!t.verifyExists()) {
-            errorLine(line_number, "unknown type " + name);
+            Error.errorLine(line_number, "unknown type " + name);
         }
     }
 
@@ -138,7 +125,7 @@ public class TypeChecker implements Visitor {
         }
         n.e.accept(this);
         if (!scope.returnType.isAssignable(n.e.type)) {
-            errorLine(n.e, "expected type " + scope.returnType + ". Got type " + n.e.type);
+            Error.errorLine(n.e, "expected type " + scope.returnType + ". Got type " + n.e.type);
         }
     }
 
@@ -192,7 +179,7 @@ public class TypeChecker implements Visitor {
         Type t = findVar(n.i.s, n);
         n.e.accept(this);
         if (!t.isAssignable(n.e.type)) {
-            errorLine(n, "cannot assign " + n.e.type + " to a " + t);
+            Error.errorLine(n, "cannot assign " + n.e.type + " to a " + t);
         }
     }
 
@@ -206,7 +193,7 @@ public class TypeChecker implements Visitor {
 
         Type t = findVar(n.i.s, n);
         if (!t.sameType(ARRAY)) {
-            errorLine(n, "expected type " + ARRAY + ". Got type " + t);
+            Error.errorLine(n, "expected type " + ARRAY + ". Got type " + t);
         }
     }
 
@@ -280,19 +267,19 @@ public class TypeChecker implements Visitor {
         if (n.e.type == null) return;
         ClassTable ct = n.e.type.getClassTable();
         if (ct == null) {
-            errorLine(n, n.e.type + " is not a class.");
+            Error.errorLine(n, n.e.type + " is not a class.");
             return;
         }
 
         MethodTable m = ct.methods.get(n.i.s);
         if (m == null) {
-            errorLine(n, "method " + n.i.s + " does not exist.");
+            Error.errorLine(n, "method " + n.i.s + " does not exist.");
             n.type = ERR;
             return;
         }
 
         if (m.params.size() != n.el.size()) {
-            errorLine(n, "expected " + m.params.size() +
+            Error.errorLine(n, "expected " + m.params.size() +
                 " arguments, got " + n.el.size() + " instead.");
             n.type = ERR;
             return;
@@ -303,7 +290,7 @@ public class TypeChecker implements Visitor {
             Exp param = n.el.get(i);
             param.accept(this);
             if (!m.params.get(i).isAssignable(param.type)) {
-                errorLine(n, "expected type " + m.params.get(i) + " in parameter " + (i + 1)
+                Error.errorLine(n, "expected type " + m.params.get(i) + " in parameter " + (i + 1)
                     + " of the call to " + n.i.s + ". Got type " + param.type + " instead.");
             }
         }
@@ -344,7 +331,7 @@ public class TypeChecker implements Visitor {
     public void visit(NewObject n) {
         // Make sure is an acutal class
         if (!classes.containsKey(n.i.s)) {
-            errorLine(n, "unknown class " + n.i.s);
+            Error.errorLine(n, "unknown class " + n.i.s);
             n.type = ERR;
             return;
         }
