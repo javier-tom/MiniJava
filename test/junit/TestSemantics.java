@@ -91,4 +91,8 @@ public class TestSemantics {
     public void testNonexistentType() {
         runSemanticsTestCaseWithErr("NonexistentType");
     }
+    @Test
+    public void testOverrideCheck() {
+        runSemanticsTestCaseWithErr("OverrideCheck");
+    }
 }
