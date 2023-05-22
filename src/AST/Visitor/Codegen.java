@@ -3,7 +3,25 @@ package AST.Visitor;
 import AST.*;
 
 public class Codegen implements Visitor {
-    public Codegen() {}
+    private StringBuilder sb;
+
+    public Codegen() {
+        sb = new StringBuilder();
+    }
+
+    // Output an instruction
+    private void insn(String i) {
+        sb.append("\t").append(i).append('\n');
+    }
+
+    // Output a label
+    private void label(String l) {
+        sb.append(l).append(":\n");
+    }
+
+    private void directive(String d) {
+        sb.append('\t').append(d).append('\n');
+    }
 
     // Display added for toy example language.  Not used in regular MiniJava
     public void visit(Display n) {}
@@ -11,11 +29,30 @@ public class Codegen implements Visitor {
 
     // MainClass m;
     // ClassDeclList cl;
-    public void visit(Program n) {}
+    public void visit(Program n) {
+        n.m.accept(this);
+        /*for ( int i = 0; i < n.cl.size(); i++ ) {
+            n.cl.get(i).accept(this);
+        }*/
+        System.out.print(sb.toString());
+    }
 
     // Identifier i1,i2;
     // Statement s;
-    public void visit(MainClass n) {}
+    public void visit(MainClass n) {
+        // create asm_main block
+        directive(".text");
+        directive(".globl asm_main");
+        label("asm_main");
+        insn("pushq %rbp");
+        insn("movq %rsp,%rbp");
+
+        n.s.accept(this);
+
+        insn("movq %rbp,%rsp");
+        insn("popq %rbp");
+        insn("ret");
+    }
 
     // Identifier i;
     // VarDeclList vl;
@@ -65,7 +102,11 @@ public class Codegen implements Visitor {
     public void visit(While n) {}
 
     // Exp e;
-    public void visit(Print n) {}
+    public void visit(Print n) {
+        n.e.accept(this);
+        insn("movq %rax,%rdi");
+        insn("call put");
+    }
 
     // Identifier i;
     // Exp e;
@@ -102,7 +143,9 @@ public class Codegen implements Visitor {
     public void visit(Call n) {}
 
     // int i;
-    public void visit(IntegerLiteral n) {}
+    public void visit(IntegerLiteral n) {
+        insn("movq $" + n.i + ",%rax");
+    }
 
     public void visit(True n) {}
 

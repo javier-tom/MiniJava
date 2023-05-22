@@ -34,16 +34,15 @@ public class MiniJava {
             filename = args[0];
         } else if (args.length == 2 || args[0].length() > 1 && args[0].length() <= 5) {
             filename = args[1];
+            // Check arguments
+            for (int i = 1; i < args[0].length(); i++) {
+                char c = args[0].charAt(i);
+                if (c != 'A' && c != 'S' && c != 'T' && c != 'P') {
+                    usage();
+                }
+            }
         } else {
             usage();
-        }
-
-        // Check arguments
-        for (int i = 1; i < args[0].length(); i++) {
-            char c = args[0].charAt(i);
-            if (c != 'A' && c != 'S' && c != 'T' && c != 'P') {
-                usage();
-            }
         }
 
         FileReader f = null;
@@ -61,7 +60,7 @@ public class MiniJava {
         int exitCode = 0;
         try {
             boolean valid = true;
-            if (args[0].contains("S")) {
+            if (args.length == 2 && args[0].contains("S")) {
                 Symbol t = scanner.next_token();
 
                 while (t.sym != sym.EOF) {
@@ -87,10 +86,10 @@ public class MiniJava {
             // Parse next
             parser p = new parser(scanner, sf);
             Program program = (Program)p.parse().value;
-            if (args[0].contains("A")) {
+            if (args.length == 2 && args[0].contains("A")) {
                 program.accept(new ASTDump());
             }
-            if (args[0].contains("P")) {
+            if (args.length == 2 && args[0].contains("P")) {
                 program.accept(new PrettyPrintVisitor());
             }
 
@@ -101,7 +100,7 @@ public class MiniJava {
                 exitCode = 1;
                 // TODO: return right here? or update to use Error.errorLine
             }
-            if (args[0].contains("T")) {
+            if (args.length == 2 && args[0].contains("T")) {
                 // Dump symbol tables
                 for (String s: classes.keySet()) {
                     if (classes.get(s) != null)
