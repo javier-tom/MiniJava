@@ -2,6 +2,7 @@ import java.io.*;
 
 import AST.Program;
 import AST.Visitor.ASTDump;
+import AST.Visitor.Codegen;
 import AST.Visitor.Error;
 import AST.Visitor.FillSymbolTables;
 import AST.Visitor.PrettyPrintVisitor;
@@ -28,7 +29,12 @@ public class MiniJava {
 
     public static void main (String[] args) {
         Error.init();
-        if (args.length != 2 || args[0].length() <= 1) {
+        String filename = "placeholder";
+        if (args.length == 1) {
+            filename = args[0];
+        } else if (args.length == 2 || args[0].length() > 1 && args[0].length() <= 5) {
+            filename = args[1];
+        } else {
             usage();
         }
 
@@ -42,7 +48,7 @@ public class MiniJava {
 
         FileReader f = null;
         try {
-            f = new FileReader(args[1]);
+            f = new FileReader(filename);
         } catch(Exception e) {
             System.exit(1);
         }
@@ -93,6 +99,7 @@ public class MiniJava {
             program.accept(new FillSymbolTables(classes));
             if (!checkSymbolTable(classes)) {
                 exitCode = 1;
+                // TODO: return right here? or update to use Error.errorLine
             }
             if (args[0].contains("T")) {
                 // Dump symbol tables
@@ -105,6 +112,12 @@ public class MiniJava {
             // And now type check it
             TypeChecker tc = new TypeChecker(classes);
             program.accept(tc);
+
+            if (args.length == 1 && Error.getStatus()) {
+                // Do codegen
+                Codegen cg = new Codegen();
+                program.accept(cg);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             exitCode = 1;
