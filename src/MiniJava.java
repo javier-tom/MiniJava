@@ -91,7 +91,9 @@ public class MiniJava {
             // Now do semantics: fill symbol tables and verify them
             Map<String, ClassTable> classes = new HashMap<>();
             program.accept(new FillSymbolTables(classes));
-            checkSymbolTable(classes);
+            if (!checkSymbolTable(classes)) {
+                exitCode = 1;
+            }
             if (args[0].contains("T")) {
                 // Dump symbol tables
                 for (String s: classes.keySet()) {
@@ -116,7 +118,8 @@ public class MiniJava {
      * verifies the method overrides are correct
      * @param table the symbol table
      */
-    private static void checkSymbolTable(Map<String, ClassTable> table) {
+    private static boolean checkSymbolTable(Map<String, ClassTable> table) {
+        boolean exitCode = true;
         Set<String> visited = new HashSet<>();
         for (Entry<String, ClassTable> e: table.entrySet()) {
             // Go up through the superclasses of each class, and make sure there
@@ -132,17 +135,21 @@ public class MiniJava {
                     // Cycle detected
                     ct.superClass = "*error";
                     System.err.println("Inheritance cycle detected for class " + e.getKey());
+                    exitCode = false;
                     break;
                 } else {
                     // Check any method overrides and copy superclass methods into
                     // this class table
                     ClassTable sup = table.get(superClass);
-                    checkOverrides(sup, ct);
+                    if (!checkOverrides(sup, ct)) {
+                        exitCode = false;
+                    }
                     visited.add(superClass);
                     superClass = table.get(superClass).superClass;
                 }
             }
         }
+        return exitCode;
     }
 
     /**
@@ -151,7 +158,8 @@ public class MiniJava {
      * @param sup superclass
      * @param sub subclass
      */
-    private static void checkOverrides(ClassTable sup, ClassTable sub) {
+    private static boolean checkOverrides(ClassTable sup, ClassTable sub) {
+        boolean exitCode = true;
         for (Entry<String, MethodTable> e: sup.methods.entrySet()) {
             if (sub.methods.containsKey(e.getKey())) {
                 MethodTable aTable = e.getValue();
@@ -162,6 +170,7 @@ public class MiniJava {
                     || aTable.params.size() != bTable.params.size()) {
                     System.err.println("Method " + e.getKey() + " is not a valid override "
                         + "in class " + sub.name);
+                    exitCode = false;
                     continue;
                 }
 
@@ -169,6 +178,7 @@ public class MiniJava {
                     if (!aTable.params.get(i).sameType(bTable.params.get(i))) {
                         System.err.println("Method " + e.getKey() + " is not a valid override "
                         + "in class " + sub.name);
+                        exitCode = false;
                         break;
                     }
                 }
@@ -176,5 +186,6 @@ public class MiniJava {
                 sub.methods.put(e.getKey(), e.getValue());
             }
         }
+        return exitCode;
     }
 }

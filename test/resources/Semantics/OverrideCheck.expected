@@ -1,0 +1,30 @@
+class A:
+  super: B
+  fields:
+  method run:
+    params: int, boolean, 
+    returns: int
+    locals:
+
+class B:
+  super: null
+  fields:
+  method run:
+    params: int, int, 
+    returns: int
+    locals:
+
+class Override:
+  super: null
+  fields:
+    int x;
+    int y;
+    boolean f1;
+    boolean f2;
+  method run:
+    params: int, int, 
+    returns: int
+    locals:
+      A a;
+      B b;
+

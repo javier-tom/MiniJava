@@ -96,4 +96,9 @@ public class TestSemantics {
     public void testDuplicates() {
         runSemanticsTestCaseWithErr("Duplicates");
     }
+    
+    @Test
+    public void testOverrideCheck() {
+        runSemanticsTestCaseWithErr("OverrideCheck");
+    }
 }
