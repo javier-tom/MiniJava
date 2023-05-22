@@ -15,6 +15,10 @@ public class Type {
     }
 
     public boolean isAssignable(Type t) {
+        if (type.equals("*error") || t.type.equals("*error")) {
+            // This is to silence repeated errors about a non-existent type.
+            return true;
+        }
         if (type.equals(t.type)) return true;
         if (classes.containsKey(type) && classes.containsKey(t.type)) {
             ClassTable classTable = classes.get(t.type);
@@ -31,6 +35,21 @@ public class Type {
      */
     public boolean sameType(Type o) {
         return o.type.equals(this.type);
+    }
+
+    /**
+     * Figure out if this type actually exists somewhere, or convert it to an error type if not
+     * @return True iff exists, false if it gets turned into an error
+     */
+    public boolean verifyExists() {
+        if (type == "int" || type == "int[]" || type == "boolean"
+            || classes.containsKey(type))
+            return true;
+        else {
+            varName = null;
+            type = "*error";
+            return false;
+        }
     }
 
     public String toString() {

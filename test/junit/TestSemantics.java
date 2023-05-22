@@ -86,4 +86,9 @@ public class TestSemantics {
     public void testSubclassAssign() {
         runSemanticsTestCaseWithErr("SubclassAssign");
     }
+
+    @Test
+    public void testNonexistentType() {
+        runSemanticsTestCaseWithErr("NonexistentType");
+    }
 }

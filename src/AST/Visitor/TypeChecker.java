@@ -60,6 +60,13 @@ public class TypeChecker implements Visitor {
         return t;
     }
 
+    private void verifyExists(Type t, ASTNode line_number) {
+        String name = t.toString(); // verifyExists overwrites the name on error
+        if (!t.verifyExists()) {
+            errorLine(line_number, "unknown type " + name);
+        }
+    }
+
     public TypeChecker(Map<String, ClassTable> classes) {
         this.classes = classes;
         INT = new Type(null, "int", classes);
@@ -120,11 +127,19 @@ public class TypeChecker implements Visitor {
     // Exp e;
     public void visit(MethodDecl n) {
         scope = currClass.methods.get(n.i.s);
+        // Check types for parameters and return, then check body
+        verifyExists(scope.returnType, n);
+        for (int i = 0; i < scope.params.size(); i++) {
+            verifyExists(scope.params.get(i), n);
+        }
+
         for (int i = 0; i < n.sl.size(); i++) {
             n.sl.get(i).accept(this);
         }
         n.e.accept(this);
-        expectType(n.e, scope.returnType);
+        if (!scope.returnType.isAssignable(n.e.type)) {
+            errorLine(n.e, "expected type " + scope.returnType + ". Got type " + n.e.type);
+        }
     }
 
     // Type t;

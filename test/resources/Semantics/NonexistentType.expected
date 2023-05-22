@@ -1,0 +1,16 @@
+class A:
+  super: null
+  fields:
+  method bad:
+    params: Bad, 
+    returns: int
+    locals:
+  method run:
+    params: 
+    returns: int
+    locals:
+  method stuff:
+    params: 
+    returns: Foo
+    locals:
+

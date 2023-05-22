@@ -1,13 +1,10 @@
 Error on line 15: unknown variable z
-Error on line 15: cannot assign int to a *error
 Error on line 16: unknown variable flag2
-Error on line 16: cannot assign boolean to a *error
 Error on line 17: unknown variable r
 Error on line 17: expected type int. Got type *error
 Error on line 18: unknown variable arr2
 Error on line 18: expected type int[]. Got type *error
 Error on line 20: method whiles does not exist.
-Error on line 20: cannot assign *error to a int
 Error on line 24: cannot assign int to a boolean
 Error on line 29: unknown variable x
 Error on line 29: unknown variable y
