@@ -176,7 +176,7 @@ public class TypeChecker implements Visitor {
         // Get type of variable
         Type t = findVar(n.i.s, n);
         n.e.accept(this);
-        if (!n.e.type.isAssignable(t)) {
+        if (!t.isAssignable(n.e.type)) {
             errorLine(n, "cannot assign " + n.e.type + " to a " + t);
         }
     }

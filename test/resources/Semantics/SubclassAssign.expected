@@ -1,9 +1,21 @@
 class A:
-  super: B
+  super: null
   fields:
 
-class B:
+class MethodParamTest:
   super: null
+  fields:
+  method testB:
+    params: B, 
+    returns: int
+    locals:
+  method testA:
+    params: A, 
+    returns: int
+    locals:
+
+class B:
+  super: A
   fields:
 
 class SubclassAssign:
@@ -15,4 +27,7 @@ class SubclassAssign:
     locals:
       A a;
       B b;
+      B bad;
+      MethodParamTest t;
+      int x;
 
