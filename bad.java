@@ -1,6 +1,10 @@
 class bad{
     public static void main(String[] a){
-	System.out.println(new Base());
+        {
+            System.out.println(11 + 123);
+            System.out.println(12 * 12);
+            System.out.println(10 - 9);
+        }
     }
 }
 

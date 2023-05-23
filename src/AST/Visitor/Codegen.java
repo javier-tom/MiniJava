@@ -4,9 +4,11 @@ import AST.*;
 
 public class Codegen implements Visitor {
     private StringBuilder sb;
+    private int numPush;
 
     public Codegen() {
         sb = new StringBuilder();
+        numPush = 0;
     }
 
     // Output an instruction
@@ -21,6 +23,16 @@ public class Codegen implements Visitor {
 
     private void directive(String d) {
         sb.append('\t').append(d).append('\n');
+    }
+
+    private void push(String reg) {
+        insn("pushq %"+reg);
+        numPush++;
+    }
+
+    private void pop(String reg) {
+        insn("popq %"+reg);
+        numPush--;
     }
 
     // Display added for toy example language.  Not used in regular MiniJava
@@ -91,7 +103,11 @@ public class Codegen implements Visitor {
     public void visit(IdentifierType n) {}
 
     // StatementList sl;
-    public void visit(Block n) {}
+    public void visit(Block n) {
+        for (int i = 0; i < n.sl.size(); i++) {
+            n.sl.get(i).accept(this);
+        }
+    }
 
     // Exp e;
     // Statement s1,s2;
@@ -105,7 +121,13 @@ public class Codegen implements Visitor {
     public void visit(Print n) {
         n.e.accept(this);
         insn("movq %rax,%rdi");
+        if (numPush % 2 != 0) {
+            push("rax");
+        }
         insn("call put");
+        if (numPush % 2 != 0) {
+            pop("rax");
+        }
     }
 
     // Identifier i;
@@ -117,19 +139,52 @@ public class Codegen implements Visitor {
     public void visit(ArrayAssign n) {}
 
     // Exp e1,e2;
-    public void visit(And n) {}
+    public void visit(And n) {
+        n.e1.accept(this);
+        push("rax");
+        n.e2.accept(this);
+        pop("rdi");
+        insn("andq %rdi, %rax");
+    }
 
     // Exp e1,e2;
-    public void visit(LessThan n) {}
+    public void visit(LessThan n) {
+        n.e1.accept(this);
+        push("rax");
+        n.e2.accept(this);
+        pop("rdi");
+        insn("cmpq %rax, %rdi");
+        insn("setl %al");
+        insn("movzbq %al, %rax");
+    }
 
     // Exp e1,e2;
-    public void visit(Plus n) {}
+    public void visit(Plus n) {
+        n.e1.accept(this);
+        push("rax");
+        n.e2.accept(this);
+        pop("rdi");
+        insn("addq %rdi, %rax");
+    }
 
     // Exp e1,e2;
-    public void visit(Minus n) {}
+    public void visit(Minus n) {
+        n.e1.accept(this);
+        push("rax");
+        n.e2.accept(this);
+        pop("rdi");
+        insn("subq %rax, %rdi");
+        insn("movq %rdi, %rax");
+    }
 
     // Exp e1,e2;
-    public void visit(Times n) {}
+    public void visit(Times n) {
+        n.e1.accept(this);
+        push("rax");
+        n.e2.accept(this);
+        pop("rdi");
+        insn("imulq %rdi");
+    }
 
     // Exp e1,e2;
     public void visit(ArrayLookup n) {}
@@ -147,9 +202,13 @@ public class Codegen implements Visitor {
         insn("movq $" + n.i + ",%rax");
     }
 
-    public void visit(True n) {}
+    public void visit(True n) {
+        insn("movq $1, %rax");
+    }
 
-    public void visit(False n) {}
+    public void visit(False n) {
+        insn("xorq %rax, %rax");
+    }
 
     // String s;
     public void visit(IdentifierExp n) {}
@@ -163,7 +222,9 @@ public class Codegen implements Visitor {
     public void visit(NewObject n) {}
 
     // Exp e;
-    public void visit(Not n) {}
+    public void visit(Not n) {
+        insn("xorq $1, %rax");
+    }
 
     // String s;
     public void visit(Identifier n) {}
