@@ -11,6 +11,7 @@ public class MethodTable {
     public String name;
     public String className;
     public Type returnType;
+    public int vtableIdx;
 
     public String toString() {
         StringBuilder sb = new StringBuilder();

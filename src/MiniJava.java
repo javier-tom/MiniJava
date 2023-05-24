@@ -114,7 +114,7 @@ public class MiniJava {
 
             if (args.length == 1 && Error.getStatus()) {
                 // Do codegen
-                Codegen cg = new Codegen();
+                Codegen cg = new Codegen(classes);
                 program.accept(cg);
             }
         } catch (Exception e) {

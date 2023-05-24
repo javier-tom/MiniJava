@@ -59,6 +59,11 @@ public class FillSymbolTables implements Visitor {
 
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.get(i).accept(this);
+            if (currMethod != null) {
+                // Method might be a duplicate, and it will be null in that case
+                currMethod.vtableIdx = i;
+                currMethod = null;
+            }
         }
 
         currClass.type = new Symbols.Type(null, n.i.s, classes);
@@ -85,6 +90,11 @@ public class FillSymbolTables implements Visitor {
 
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.get(i).accept(this);
+            if (currMethod != null) {
+                // Method might be a duplicate, and it will be null in that case
+                currMethod.vtableIdx = i;
+                currMethod = null;
+            }
         }
 
         currClass.type = new Symbols.Type(null, n.i.s, classes);
@@ -137,7 +147,6 @@ public class FillSymbolTables implements Visitor {
         currMethod.returnType = new Symbols.Type(null, getType(n.t), classes);
         currMethod.className = currClass.name;
         currClass.methods.put(n.i.s, currMethod);
-        currMethod = null;
     }
 
     // Type t;

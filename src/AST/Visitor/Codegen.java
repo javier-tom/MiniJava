@@ -1,13 +1,23 @@
 package AST.Visitor;
 
+import java.util.Map;
+
 import AST.*;
+import Symbols.ClassTable;
+import Symbols.MethodTable;
 
 public class Codegen implements Visitor {
     private StringBuilder sb;
     private int numPush;
+    private Map<String, ClassTable> classes;
+    private ClassTable currClass;
+    private MethodTable currMethod;
 
-    public Codegen() {
+    private String[] paramRegist = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
+
+    public Codegen(Map<String, ClassTable> classes) {
         sb = new StringBuilder();
+        this.classes = classes;
         numPush = 0;
     }
 
@@ -35,6 +45,18 @@ public class Codegen implements Visitor {
         numPush--;
     }
 
+    private void align() {
+        if (numPush % 2 != 0) {
+            push("rax");
+        }
+    }
+
+    private void unalign() {
+        if (numPush % 2 != 0) {
+            insn("addq $8, %rsp");
+        }
+    }
+
     // Display added for toy example language.  Not used in regular MiniJava
     public void visit(Display n) {}
 
@@ -43,9 +65,9 @@ public class Codegen implements Visitor {
     // ClassDeclList cl;
     public void visit(Program n) {
         n.m.accept(this);
-        /*for ( int i = 0; i < n.cl.size(); i++ ) {
+        for ( int i = 0; i < n.cl.size(); i++ ) {
             n.cl.get(i).accept(this);
-        }*/
+        }
         System.out.print(sb.toString());
     }
 
@@ -69,7 +91,22 @@ public class Codegen implements Visitor {
     // Identifier i;
     // VarDeclList vl;
     // MethodDeclList ml;
-    public void visit(ClassDeclSimple n) {}
+    public void visit(ClassDeclSimple n) {
+        // Set up vtable
+        directive(".data");
+        label(n.i.s + "$$");
+        insn(".quad 0");
+        currClass = classes.get(n.i.s);
+        // Is hashmap ordering good enough?
+        for (String s: currClass.methods.keySet()) {
+            insn(".quad " + n.i.s + '$' + s);
+        }
+
+        directive(".text");
+        for (int i = 0; i < n.ml.size(); i++) {
+            n.ml.get(i).accept(this);
+        }
+    }
 
     // Identifier i;
     // Identifier j;
@@ -87,7 +124,33 @@ public class Codegen implements Visitor {
     // VarDeclList vl;
     // StatementList sl;
     // Exp e;
-    public void visit(MethodDecl n) {}
+    public void visit(MethodDecl n) {
+        // figure out locals for stack
+        label(currClass.name + '$' + n.i.s);
+        insn("pushq %rbp");
+        insn("movq %rsp,%rbp");
+        
+        currMethod = currClass.methods.get(n.i.s);
+        for (int i = 0; i < currMethod.params.size(); i++) {
+            push(paramRegist[i]);
+        }
+
+        insn("xorq %rax, %rax");
+        for (int i = 0; i < currMethod.locals.size(); i++) {
+            insn("pushq %rax"); // Zero initialze all locals
+        }
+
+        // Generate code for all statements
+        for (int i = 0; i < n.sl.size(); i++) {
+            n.sl.get(i).accept(this);
+        }
+
+        // Leaves result in %rax, and then we can just return
+        n.e.accept(this);
+        insn("movq %rbp,%rsp");
+        insn("popq %rbp");
+        insn("ret");
+    }
 
     // Type t;
     // Identifier i;
@@ -121,13 +184,9 @@ public class Codegen implements Visitor {
     public void visit(Print n) {
         n.e.accept(this);
         insn("movq %rax,%rdi");
-        if (numPush % 2 != 0) {
-            push("rax");
-        }
+        align();
         insn("call put");
-        if (numPush % 2 != 0) {
-            pop("rax");
-        }
+        unalign();
     }
 
     // Identifier i;
@@ -195,7 +254,26 @@ public class Codegen implements Visitor {
     // Exp e;
     // Identifier i;
     // ExpList el;
-    public void visit(Call n) {}
+    public void visit(Call n) {
+        // evaluate parameters and then call
+        n.e.accept(this);
+        push("rax");
+        for (int i = 0; i < n.el.size(); i++) {
+            n.el.get(i).accept(this);
+            push("rax");
+        }
+
+        // Fill up registers for method call
+        for (int i = n.el.size() + 1; i >= 0; i--) {
+            pop(paramRegist[i]);
+        }
+
+        ClassTable c = classes.get(n.e.type.toString());
+        MethodTable m = c.methods.get(n.i.s);
+        align();
+        insn("call $" + ((m.vtableIdx + 1) * 8) + "(%rdi)");
+        unalign();
+    }
 
     // int i;
     public void visit(IntegerLiteral n) {
@@ -219,7 +297,18 @@ public class Codegen implements Visitor {
     public void visit(NewArray n) {}
 
     // Identifier i;
-    public void visit(NewObject n) {}
+    public void visit(NewObject n) {
+        ClassTable c = classes.get(n.i.s);
+        int size = (1 + c.fields.size()) * 8; // For vtable pointer
+        insn("movq $" + size + ", %rdi");
+        align();
+        insn("call mjcalloc");
+        unalign();
+
+        // fill in vtable pointer
+        insn("leaq " + n.i.s + "$$(%rip), %rdi");
+        insn("movq %rdi, (%rax)");
+    }
 
     // Exp e;
     public void visit(Not n) {
