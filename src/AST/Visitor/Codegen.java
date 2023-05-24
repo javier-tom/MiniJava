@@ -1,5 +1,8 @@
 package AST.Visitor;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import AST.*;
@@ -98,8 +101,11 @@ public class Codegen implements Visitor {
         insn(".quad 0");
         currClass = classes.get(n.i.s);
         // Is hashmap ordering good enough?
-        for (String s: currClass.methods.keySet()) {
-            insn(".quad " + n.i.s + '$' + s);
+        List<MethodTable> methods = new ArrayList<>(currClass.methods.values());
+        methods.sort((MethodTable a, MethodTable b) -> a.vtableIdx - b.vtableIdx);
+
+        for (MethodTable m: methods) {
+            insn(".quad " + n.i.s + '$' + m.name);
         }
 
         directive(".text");
@@ -292,7 +298,9 @@ public class Codegen implements Visitor {
     // String s;
     public void visit(IdentifierExp n) {}
 
-    public void visit(This n) {}
+    public void visit(This n) {
+        insn("movq -8(%rbp), %rax");
+    }
 
     // Exp e;
     public void visit(NewArray n) {}

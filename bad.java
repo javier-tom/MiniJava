@@ -9,9 +9,14 @@ class Base {
 
     public int run(int num) {
         System.out.println(10);
+        System.out.println(this.test());
         System.out.println(50 * 5);
         System.out.println(1);
         return 5;
+    }
+
+    public int test() {
+        return 6;
     }
 }
 
