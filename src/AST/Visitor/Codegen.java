@@ -47,7 +47,7 @@ public class Codegen implements Visitor {
 
     private void align() {
         if (numPush % 2 != 0) {
-            push("rax");
+            insn("pushq %rax");
         }
     }
 
@@ -264,14 +264,15 @@ public class Codegen implements Visitor {
         }
 
         // Fill up registers for method call
-        for (int i = n.el.size() + 1; i >= 0; i--) {
+        for (int i = n.el.size(); i >= 0; i--) {
             pop(paramRegist[i]);
         }
 
         ClassTable c = classes.get(n.e.type.toString());
         MethodTable m = c.methods.get(n.i.s);
+        insn("movq (%rdi), %rax"); // get vtable location
         align();
-        insn("call $" + ((m.vtableIdx + 1) * 8) + "(%rdi)");
+        insn("call *" + ((m.vtableIdx + 1) * 8) + "(%rax)");
         unalign();
     }
 
