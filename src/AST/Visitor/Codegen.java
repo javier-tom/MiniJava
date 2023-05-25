@@ -196,7 +196,19 @@ public class Codegen implements Visitor {
 
     // Exp e;
     // Statement s;
-    public void visit(While n) {}
+    public void visit(While n) {
+        String whileBegin = "while" + (currLabel++);
+        String whileEnd = "endWhile" + (currLabel++);
+
+        insn("jmp " + whileEnd);
+        label(whileBegin);
+        n.s.accept(this);
+        label(whileEnd);
+
+        n.e.accept(this);
+        insn("testq %rax, %rax");
+        insn("jnz " + whileBegin);
+    }
 
     // Exp e;
     public void visit(Print n) {
