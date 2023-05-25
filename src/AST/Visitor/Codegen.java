@@ -65,11 +65,9 @@ public class Codegen implements Visitor {
     private String getMem(String s) {
         for (int i = 0; i < currMethod.params.size(); i++) {
             if (s.equals(currMethod.params.get(i).varName)) {
-                // return something
                 return "-"+(i + 2)*8 + "(%rbp)";
             }
         }
-        // for loop for locals
         Symbols.Type t = currMethod.locals.get(s);
         if (t != null) {
             return "-"+(t.location + currMethod.params.size() + 2)*8 + "(%rbp)";
@@ -135,7 +133,12 @@ public class Codegen implements Visitor {
     // Identifier j;
     // VarDeclList vl;
     // MethodDeclList ml;
-    public void visit(ClassDeclExtends n) {}
+    public void visit(ClassDeclExtends n) {
+        directive(".data");
+        label(n.i.s + "$$");
+        insn(".quad "+n.j.s+ "$$");
+
+    }
 
     // Type t;
     // Identifier i;
@@ -154,7 +157,7 @@ public class Codegen implements Visitor {
         insn("movq %rsp,%rbp");
         
         currMethod = currClass.methods.get(n.i.s);
-        for (int i = 0; i < currMethod.params.size(); i++) {
+        for (int i = 0; i < currMethod.params.size() + 1; i++) {
             push(paramRegist[i]);
         }
 
@@ -246,7 +249,16 @@ public class Codegen implements Visitor {
 
     // Identifier i;
     // Exp e1,e2;
-    public void visit(ArrayAssign n) {}
+    public void visit(ArrayAssign n) {
+        String s = getMem(n.i.s);
+        n.e1.accept(this);
+        push("rax");
+        n.e2.accept(this);
+        // do bound check
+        pop("rdx");
+        insn("movq "+s+",%rcx");
+        insn("movq %rax, 8(%rcx, %rdx, 8)");
+    }
 
     // Exp e1,e2;
     public void visit(And n) {
@@ -297,10 +309,19 @@ public class Codegen implements Visitor {
     }
 
     // Exp e1,e2;
-    public void visit(ArrayLookup n) {}
+    public void visit(ArrayLookup n) {
+        n.e1.accept(this);
+        push("rax");
+        n.e2.accept(this);
+        pop("rdi");
+        insn("movq 8(%rdi, %rax, 8), %rax");
+    }
 
     // Exp e;
-    public void visit(ArrayLength n) {}
+    public void visit(ArrayLength n) {
+        n.e.accept(this);
+        insn("movq (%rax), %rax");
+    }
 
     // Exp e;
     // Identifier i;
@@ -350,7 +371,13 @@ public class Codegen implements Visitor {
     }
 
     // Exp e;
-    public void visit(NewArray n) {}
+    public void visit(NewArray n) {
+        n.e.accept(this);
+        insn("leaq (8, %rax, 8), %rdi");
+        align();
+        insn("call mjcalloc");
+        unalign();
+    }
 
     // Identifier i;
     public void visit(NewObject n) {
