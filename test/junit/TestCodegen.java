@@ -48,4 +48,9 @@ public class TestCodegen {
     public void testSimple() {
         runCodegenTestCase("Simple");
     }
+
+    @Test
+    public void testBlock() {
+        runCodegenTestCase("Block");
+    }
 }
