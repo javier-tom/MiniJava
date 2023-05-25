@@ -1,7 +1,6 @@
 package AST.Visitor;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +99,6 @@ public class Codegen implements Visitor {
         label(n.i.s + "$$");
         insn(".quad 0");
         currClass = classes.get(n.i.s);
-        // Is hashmap ordering good enough?
         List<MethodTable> methods = new ArrayList<>(currClass.methods.values());
         methods.sort((MethodTable a, MethodTable b) -> a.vtableIdx - b.vtableIdx);
 

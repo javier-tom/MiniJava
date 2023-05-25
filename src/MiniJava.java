@@ -32,7 +32,7 @@ public class MiniJava {
         String filename = "placeholder";
         if (args.length == 1) {
             filename = args[0];
-        } else if (args.length == 2 || args[0].length() > 1 && args[0].length() <= 5) {
+        } else if (args.length == 2 && args[0].length() > 1 && args[0].length() <= 5) {
             filename = args[1];
             // Check arguments
             for (int i = 1; i < args[0].length(); i++) {
