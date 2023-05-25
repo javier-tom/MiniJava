@@ -255,6 +255,7 @@ public class Codegen implements Visitor {
         push("rax");
         n.e2.accept(this);
         // do bound check
+
         pop("rdx");
         insn("movq "+s+",%rcx");
         insn("movq %rax, 8(%rcx, %rdx, 8)");
@@ -373,7 +374,7 @@ public class Codegen implements Visitor {
     // Exp e;
     public void visit(NewArray n) {
         n.e.accept(this);
-        insn("leaq (8, %rax, 8), %rdi");
+        insn("leaq 8(, %rax, 8), %rdi");
         align();
         insn("call mjcalloc");
         unalign();
