@@ -7,6 +7,7 @@ import java.util.Map;
 import AST.*;
 import Symbols.ClassTable;
 import Symbols.MethodTable;
+import java_cup.runtime.Symbol;
 
 public class Codegen implements Visitor {
     private StringBuilder sb;
@@ -59,6 +60,22 @@ public class Codegen implements Visitor {
         if (numPush % 2 != 0) {
             insn("addq $8, %rsp");
         }
+    }
+
+    private String getMem(String s) {
+        for (int i = 0; i < currMethod.params.size(); i++) {
+            if (s.equals(currMethod.params.get(i).varName)) {
+                // return something
+                return "-"+(i + 2)*8 + "(%rbp)";
+            }
+        }
+        // for loop for locals
+        Symbols.Type t = currMethod.locals.get(s);
+        if (t != null) {
+            return "-"+(t.location + currMethod.params.size() + 2)*8 + "(%rbp)";
+        }
+        return "ERROR!";
+        // loop through fields
     }
 
     // Display added for toy example language.  Not used in regular MiniJava
@@ -221,7 +238,11 @@ public class Codegen implements Visitor {
 
     // Identifier i;
     // Exp e;
-    public void visit(Assign n) {}
+    public void visit(Assign n) {
+        String s = getMem(n.i.s);
+        n.e.accept(this);
+        insn("movq %rax,"+s);
+    }
 
     // Identifier i;
     // Exp e1,e2;
@@ -320,7 +341,9 @@ public class Codegen implements Visitor {
     }
 
     // String s;
-    public void visit(IdentifierExp n) {}
+    public void visit(IdentifierExp n) {
+        insn("movq " + getMem(n.s) + ",%rax");
+    }
 
     public void visit(This n) {
         insn("movq -8(%rbp), %rax");

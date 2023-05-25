@@ -7,11 +7,13 @@ public class Type {
     public String varName;
     private String type;
     private Map<String, ClassTable> classes;
+    public int location;
 
     public Type(String varName, String type, Map<String,ClassTable> classes) {
         this.varName = varName;
         this.type = type;
         this.classes = classes;
+        this.location = Integer.MIN_VALUE;
     }
 
     public boolean isAssignable(Type t) {

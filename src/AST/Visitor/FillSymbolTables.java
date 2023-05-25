@@ -112,12 +112,14 @@ public class FillSymbolTables implements Visitor {
                 Error.errorLine(n, "duplicate variable " + n.i.s + " delcared");
                 return;
             }
+            t.location = currMethod.locals.size();
             currMethod.locals.put(n.i.s, t);
         } else {
             if (currClass.fields.containsKey(n.i.s)) {
                 Error.errorLine(n, "duplicate field " + n.i.s + " delcared");
                 return;
             }
+            t.location = currClass.fields.size();
             currClass.fields.put(n.i.s, t);
         }
     }
