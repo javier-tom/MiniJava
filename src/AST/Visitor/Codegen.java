@@ -14,6 +14,7 @@ public class Codegen implements Visitor {
     private Map<String, ClassTable> classes;
     private ClassTable currClass;
     private MethodTable currMethod;
+    private int currLabel;
 
     private String[] paramRegist = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 
@@ -21,6 +22,7 @@ public class Codegen implements Visitor {
         sb = new StringBuilder();
         this.classes = classes;
         numPush = 0;
+        currLabel = 0;
     }
 
     // Output an instruction
@@ -178,7 +180,19 @@ public class Codegen implements Visitor {
 
     // Exp e;
     // Statement s1,s2;
-    public void visit(If n) {}
+    public void visit(If n) {
+        String elseBegin = "else" + (currLabel++);
+        String endBlock = "endElse" + (currLabel++);
+
+        n.e.accept(this);
+        insn("testq %rax, %rax");
+        insn("jz " + elseBegin);
+        n.s1.accept(this);
+        insn("jmp " + endBlock);
+        label(elseBegin);
+        n.s2.accept(this);
+        label(endBlock);
+    }
 
     // Exp e;
     // Statement s;
