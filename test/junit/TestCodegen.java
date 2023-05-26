@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 public class TestCodegen {
 
     public static final String TEST_FILES_LOCATION = "test/resources/Codegen/";
+    public static final String SAMPLE_TEST_FILES_LOCATION = "SamplePrograms/SampleMiniJavaPrograms/";
     public static final String TEST_FILES_INPUT_EXTENSION = ".java";
     public static final String TEST_FILES_EXPECTED_EXTENSION = ".expected";
     public static final String TEST_FILES_ERROR_EXTENSION = ".stderr";
@@ -23,6 +24,17 @@ public class TestCodegen {
                 .testCompiledProgramOutputMatchesJava(
                     Path.of(TEST_FILES_LOCATION, testCaseName + TEST_FILES_INPUT_EXTENSION)
                 );
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    private void executeSampleProgramTestCase(String testCaseName) {
+        try {
+            new MiniJavaTestBuilder()
+                    .testCompiledProgramOutputMatchesJava(
+                            Path.of(SAMPLE_TEST_FILES_LOCATION, testCaseName + TEST_FILES_INPUT_EXTENSION)
+                    );
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -81,7 +93,7 @@ public class TestCodegen {
     public void testComplex() {
         executeCodegenTestCase("Complex");
     }
-    
+
     @Test
     public void testLogicOperators() {
         executeCodegenTestCase("LogicOperators");
@@ -90,5 +102,17 @@ public class TestCodegen {
     @Test
     public void testArray() {
         executeCodegenTestCase("Array");
+    }
+
+    @Test
+    public void testSamplePrograms() {
+        executeSampleProgramTestCase("BinarySearch");
+        executeSampleProgramTestCase("BinaryTree");
+        executeSampleProgramTestCase("BubbleSort");
+        executeSampleProgramTestCase("Factorial");
+        executeSampleProgramTestCase("LinearSearch");
+        executeSampleProgramTestCase("LinkedList");
+        executeSampleProgramTestCase("QuickSort");
+        executeSampleProgramTestCase("TreeVisitor");
     }
 }
