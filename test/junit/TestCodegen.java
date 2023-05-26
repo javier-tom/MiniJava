@@ -82,7 +82,13 @@ public class TestCodegen {
         executeCodegenTestCase("Complex");
     }
     
+    @Test
     public void testLogicOperators() {
         executeCodegenTestCase("LogicOperators");
+    }
+
+    @Test
+    public void testArray() {
+        executeCodegenTestCase("Array");
     }
 }

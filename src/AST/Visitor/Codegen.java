@@ -278,7 +278,7 @@ public class Codegen implements Visitor {
         n.e1.accept(this);
         push("rax");
         n.e2.accept(this);
-        // do bound check
+        // do bound check TODO
 
         pop("rdx");
         insn("movq -8(%rbp), %rdi");
