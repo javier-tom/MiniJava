@@ -194,11 +194,14 @@ public class MiniJava {
         int vtableIdx = merged.size();
         for (Entry<String, MethodTable> e: sub.methods.entrySet()) {
             if (merged.containsKey(e.getKey())) {
-                // Verify the override
+                // Replace the method in the table with the subclass method
                 MethodTable aTable = e.getValue();
                 MethodTable bTable = merged.get(e.getKey());
+                aTable.vtableIdx = bTable.vtableIdx;
+                merged.put(e.getKey(), e.getValue());
 
-                // Parameters and return type must match
+                // Verify the override:
+                // Return type must be assignable to super class's return type
                 if (!bTable.returnType.isAssignable(aTable.returnType)
                     || aTable.params.size() != bTable.params.size()) {
                     System.err.println("Method " + e.getKey() + " is not a valid override "
@@ -207,6 +210,7 @@ public class MiniJava {
                     continue;
                 }
 
+                // Parameters must match exactly
                 for (int i = 0; i < aTable.params.size(); i++) {
                     if (!aTable.params.get(i).sameType(bTable.params.get(i))) {
                         System.err.println("Method " + e.getKey() + " is not a valid override "

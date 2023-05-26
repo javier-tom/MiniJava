@@ -2,16 +2,16 @@ class A:
   super: B
   fields:
   method run:
-    params: int, int, 
+    params: int, boolean, 
     returns: int
     locals:
   method bad:
     params: 
-    returns: D
+    returns: F
     locals:
   method good:
     params: 
-    returns: D
+    returns: C
     locals:
 
 class B:
