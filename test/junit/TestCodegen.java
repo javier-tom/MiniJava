@@ -81,4 +81,8 @@ public class TestCodegen {
     public void testComplex() {
         executeCodegenTestCase("Complex");
     }
+    
+    public void testLogicOperators() {
+        executeCodegenTestCase("LogicOperators");
+    }
 }
