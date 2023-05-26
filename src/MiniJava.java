@@ -158,10 +158,28 @@ public class MiniJava {
             // this class table
             if (ct.superClass != null) {
                 ClassTable sup = table.get(ct.superClass);
-                exitCode = exitCode && checkOverrides(sup, ct);
+                if (exitCode) {
+                    // inheritance cycles will cause infinite loops
+                    calcSuperFields(ct, table);
+                    exitCode = exitCode && checkOverrides(sup, ct);
+                }
             }
         }
         return exitCode;
+    }
+
+    // Calculate
+    private static void calcSuperFields(ClassTable ct, Map<String, ClassTable> table) {
+        ClassTable sup = table.get(ct.superClass);
+        if (sup == null) {
+            ct.superFields = 0;
+        } else {
+            if (sup.superFields == -1) {
+                // Hasn't been calculated yet
+                calcSuperFields(sup, table);
+            }
+            ct.superFields = sup.superFields + sup.fields.size();
+        }
     }
 
     /**

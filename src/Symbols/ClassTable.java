@@ -6,6 +6,7 @@ import java.util.Map;
 public class ClassTable {
     public Map<String, MethodTable> methods = new HashMap<>();
     public Map<String, Type> fields = new HashMap<>();
+    public int superFields = 0; // Number of fields on super class
     public String superClass;
     public String name;
     public Type type;

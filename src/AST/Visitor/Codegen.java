@@ -72,8 +72,20 @@ public class Codegen implements Visitor {
         if (t != null) {
             return "-"+(t.location + currMethod.params.size() + 2)*8 + "(%rbp)";
         }
-        return "ERROR!";
+        
         // loop through fields
+        ClassTable curr = currClass;
+        while (curr != null) {
+            if (curr.fields.containsKey(s)) {
+                return ""+(curr.fields.get(s).location + curr.superFields + 1)*8 + "(%rdi)";
+            }
+            if (curr.superClass != null) {
+                curr = classes.get(curr.superClass);
+            } else break;
+        }
+
+        // Shouldn't ever be reached
+        return "ERROR!";
     }
 
     // Display added for toy example language.  Not used in regular MiniJava
@@ -138,6 +150,18 @@ public class Codegen implements Visitor {
         label(n.i.s + "$$");
         insn(".quad "+n.j.s+ "$$");
 
+        currClass = classes.get(n.i.s);
+        List<MethodTable> methods = new ArrayList<>(currClass.methods.values());
+        methods.sort((MethodTable a, MethodTable b) -> a.vtableIdx - b.vtableIdx);
+
+        for (MethodTable m: methods) {
+            insn(".quad " + m.className + '$' + m.name);
+        }
+
+        directive(".text");
+        for (int i = 0; i < n.ml.size(); i++) {
+            n.ml.get(i).accept(this);
+        }
     }
 
     // Type t;
@@ -201,7 +225,7 @@ public class Codegen implements Visitor {
     // Exp e;
     // Statement s1,s2;
     public void visit(If n) {
-        String elseBegin = "else" + (currLabel++);
+        String elseBegin = "else" + currLabel;
         String endBlock = "endElse" + (currLabel++);
 
         n.e.accept(this);
@@ -217,7 +241,7 @@ public class Codegen implements Visitor {
     // Exp e;
     // Statement s;
     public void visit(While n) {
-        String whileBegin = "while" + (currLabel++);
+        String whileBegin = "while" + currLabel;
         String whileEnd = "endWhile" + (currLabel++);
 
         insn("jmp " + whileEnd);
@@ -244,6 +268,7 @@ public class Codegen implements Visitor {
     public void visit(Assign n) {
         String s = getMem(n.i.s);
         n.e.accept(this);
+        insn("movq -8(%rbp), %rdi");
         insn("movq %rax,"+s);
     }
 
@@ -257,12 +282,14 @@ public class Codegen implements Visitor {
         // do bound check
 
         pop("rdx");
+        insn("movq -8(%rbp), %rdi");
         insn("movq "+s+",%rcx");
         insn("movq %rax, 8(%rcx, %rdx, 8)");
     }
 
     // Exp e1,e2;
     public void visit(And n) {
+        // TODO: short circuiting
         n.e1.accept(this);
         push("rax");
         n.e2.accept(this);
@@ -364,6 +391,7 @@ public class Codegen implements Visitor {
 
     // String s;
     public void visit(IdentifierExp n) {
+        insn("movq -8(%rbp), %rdi");
         insn("movq " + getMem(n.s) + ",%rax");
     }
 

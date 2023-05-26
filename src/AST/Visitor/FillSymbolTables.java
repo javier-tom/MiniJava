@@ -84,6 +84,10 @@ public class FillSymbolTables implements Visitor {
         currClass.name = n.i.s;
         currClass.superClass = n.j.s;
 
+        // Will get calculated later. Can't do now, since we might not have visited
+        // the super class yet.
+        currClass.superFields = -1;
+
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.get(i).accept(this);
         }
