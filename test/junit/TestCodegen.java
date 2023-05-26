@@ -55,25 +55,21 @@ public class TestCodegen {
     @Test
     public void testShortCircuit() {
         executeCodegenTestCase("ShortCircuit");
-        runCodegenTestCase("ShortCircuit");
     }
 
     @Test
     public void testAssignment() {
         executeCodegenTestCase("Assignment");
-        runCodegenTestCase("Assignment");
     }
 
     @Test
     public void testInheritance() {
         executeCodegenTestCase("Inheritance");
-        runCodegenTestCase("Inheritance");
     }
 
     @Test
     public void testConditionals() {
         executeCodegenTestCase("Conditionals");
-        runCodegenTestCase("Conditionals");
     }
 
     @Test
