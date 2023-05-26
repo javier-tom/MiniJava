@@ -76,4 +76,9 @@ public class TestCodegen {
     public void testArrayLength() {
         executeCodegenTestCase("ArrayLength");
     }
+
+    @Test
+    public void testComplex() {
+        executeCodegenTestCase("Complex");
+    }
 }
