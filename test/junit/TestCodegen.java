@@ -17,6 +17,17 @@ public class TestCodegen {
         You may be able to reuse this private helper method for your own
         testing of the MiniJava scanner.
     */
+    private void executeCodegenTestCase(String testCaseName) {
+        try {
+            new MiniJavaTestBuilder()
+                .testCompiledProgramOutputMatchesJava(
+                    Path.of(TEST_FILES_LOCATION, testCaseName + TEST_FILES_INPUT_EXTENSION)
+                );
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
     private void runCodegenTestCase(String testCaseName) {
         try {
             new MiniJavaTestBuilder()
@@ -29,28 +40,20 @@ public class TestCodegen {
         }
     }
 
-    private void runCodegenTestCaseWithErr(String testCaseName) {
-        try {
-            new MiniJavaTestBuilder()
-                    .assertSystemOutMatchesContentsOf(
-                            Path.of(TEST_FILES_LOCATION,
-                                    testCaseName + TEST_FILES_EXPECTED_EXTENSION))
-                    .assertSystemErrMatchesContentsOf(
-                            Path.of(TEST_FILES_LOCATION,
-                                    testCaseName + TEST_FILES_ERROR_EXTENSION))
-                    .testCompiler(TEST_FILES_LOCATION + testCaseName + TEST_FILES_INPUT_EXTENSION);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-    }
-
     @Test
     public void testSimple() {
+        executeCodegenTestCase("Simple");
         runCodegenTestCase("Simple");
     }
 
     @Test
     public void testBlock() {
+        executeCodegenTestCase("Block");
         runCodegenTestCase("Block");
+    }
+
+    @Test
+    public void testShortCircuit() {
+        executeCodegenTestCase("ShortCircuit");
     }
 }

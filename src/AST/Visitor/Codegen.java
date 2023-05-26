@@ -289,12 +289,18 @@ public class Codegen implements Visitor {
 
     // Exp e1,e2;
     public void visit(And n) {
-        // TODO: short circuiting
+        String shortCircuit = "shortCircuit" + (currLabel++);
+
         n.e1.accept(this);
+        // Only execute rhs if lhs is true
+        insn("testq %rax, %rax");
+        insn("jz " + shortCircuit);
+
         push("rax");
         n.e2.accept(this);
         pop("rdi");
         insn("andq %rdi, %rax");
+        label(shortCircuit);
     }
 
     // Exp e1,e2;
