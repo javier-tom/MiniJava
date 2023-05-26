@@ -105,14 +105,42 @@ public class TestCodegen {
     }
 
     @Test
-    public void testSamplePrograms() {
+    public void testBinarySearch() {
         executeSampleProgramTestCase("BinarySearch");
+    }
+
+    @Test
+    public void testBinaryTree() {
         executeSampleProgramTestCase("BinaryTree");
+    }
+
+    @Test
+    public void testBubbleSort() {
         executeSampleProgramTestCase("BubbleSort");
+    }
+
+    @Test
+    public void testFactorial() {
         executeSampleProgramTestCase("Factorial");
+    }
+
+    @Test
+    public void testLinearSearch() {
         executeSampleProgramTestCase("LinearSearch");
+    }
+
+    @Test
+    public void testLinkedList() {
         executeSampleProgramTestCase("LinkedList");
+    }
+
+    @Test
+    public void testQuickSort() {
         executeSampleProgramTestCase("QuickSort");
+    }
+
+    @Test
+    public void testTreeVisitor() {
         executeSampleProgramTestCase("TreeVisitor");
     }
 }
