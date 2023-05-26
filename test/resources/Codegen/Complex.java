@@ -8,8 +8,8 @@ class Over {
     public int run(int x) {
         C c;
         c = new C();
-        c.putVal();
-        return 0
+        System.out.println(c.putVal());
+        return 0;
     }
 }
 
@@ -46,12 +46,11 @@ class C extends B {
     public int putVal() {
         int sum;
         b = new B();
-        b.checkSum(true);
-        sum = b.sum;
+        sum = b.checkSum(true);
         arr = new int[sum];
         while (0 < sum) {
             sum = sum - 1;
-            arr[sum] = b.a.doMath(sum);
+            arr[sum] = b.doMath(sum);
         }
         return arr[arr.length - 1];
     }
