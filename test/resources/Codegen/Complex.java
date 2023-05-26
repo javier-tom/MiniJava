@@ -6,19 +6,10 @@ class Main {
 
 class Over {
     public int run(int x) {
-        A a;
-        B b;
         C c;
-        D d;
-        a = new D();
-        b = new B();
         c = new C();
-        d = new D();
-        System.out.println(a.run(0));
-        System.out.println(b.run(1));
-        System.out.println(c.run(2));
-        System.out.println(d.run(3));
-        return x;
+        c.putVal();
+        return 0
     }
 }
 
