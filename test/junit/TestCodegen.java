@@ -56,4 +56,9 @@ public class TestCodegen {
     public void testShortCircuit() {
         executeCodegenTestCase("ShortCircuit");
     }
+
+    @Test
+    public void testArrayLength() {
+        executeCodegenTestCase("ArrayLength");
+    }
 }

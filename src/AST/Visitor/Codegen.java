@@ -7,7 +7,6 @@ import java.util.Map;
 import AST.*;
 import Symbols.ClassTable;
 import Symbols.MethodTable;
-import java_cup.runtime.Symbol;
 
 public class Codegen implements Visitor {
     private StringBuilder sb;
@@ -409,9 +408,14 @@ public class Codegen implements Visitor {
     public void visit(NewArray n) {
         n.e.accept(this);
         insn("leaq 8(, %rax, 8), %rdi");
+        push("rax");
         align();
         insn("call mjcalloc");
         unalign();
+
+        // Store the length as the first element
+        pop("rdi");
+        insn("movq %rdi, (%rax)");
     }
 
     // Identifier i;
