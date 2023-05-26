@@ -434,6 +434,7 @@ public class Codegen implements Visitor {
 
     // Exp e;
     public void visit(Not n) {
+        n.e.accept(this);
         insn("xorq $1, %rax");
     }
 

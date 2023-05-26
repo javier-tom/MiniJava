@@ -143,4 +143,9 @@ public class TestCodegen {
     public void testTreeVisitor() {
         executeSampleProgramTestCase("TreeVisitor");
     }
+
+    @Test
+    public void testParen() {
+        executeCodegenTestCase("Paren");
+    }
 }
