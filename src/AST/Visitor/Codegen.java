@@ -421,7 +421,7 @@ public class Codegen implements Visitor {
     // Identifier i;
     public void visit(NewObject n) {
         ClassTable c = classes.get(n.i.s);
-        int size = (1 + c.fields.size()) * 8; // For vtable pointer
+        int size = (1 + c.fields.size() + c.superFields) * 8; // For vtable pointer
         insn("movq $" + size + ", %rdi");
         align();
         insn("call mjcalloc");
