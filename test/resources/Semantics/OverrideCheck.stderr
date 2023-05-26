@@ -1,1 +1,4 @@
+Method bad is not a valid override in class A
 Method run is not a valid override in class A
+Error on line 17: expected type int in parameter 2 of the call to run. Got type boolean instead.
+Error on line 33: expected type D. Got type F

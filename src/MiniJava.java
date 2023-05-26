@@ -150,15 +150,15 @@ public class MiniJava {
                     exitCode = false;
                     break;
                 } else {
-                    // Check any method overrides and copy superclass methods into
-                    // this class table
-                    ClassTable sup = table.get(superClass);
-                    if (!checkOverrides(sup, ct)) {
-                        exitCode = false;
-                    }
                     visited.add(superClass);
                     superClass = table.get(superClass).superClass;
                 }
+            }
+            // Check any method overrides and copy superclass methods into
+            // this class table
+            if (ct.superClass != null) {
+                ClassTable sup = table.get(ct.superClass);
+                exitCode = exitCode && checkOverrides(sup, ct);
             }
         }
         return exitCode;
@@ -166,19 +166,22 @@ public class MiniJava {
 
     /**
      * Fills method table in subclass with methods from superclass, and checks
-     * overrides at the same time
+     * overrides at the same time. Also assigns vtable indices to methods
      * @param sup superclass
      * @param sub subclass
      */
     private static boolean checkOverrides(ClassTable sup, ClassTable sub) {
         boolean exitCode = true;
-        for (Entry<String, MethodTable> e: sup.methods.entrySet()) {
-            if (sub.methods.containsKey(e.getKey())) {
+        Map<String, MethodTable> merged = new HashMap<>(sup.methods);
+        int vtableIdx = merged.size();
+        for (Entry<String, MethodTable> e: sub.methods.entrySet()) {
+            if (merged.containsKey(e.getKey())) {
+                // Verify the override
                 MethodTable aTable = e.getValue();
-                MethodTable bTable = sub.methods.get(e.getKey());
+                MethodTable bTable = merged.get(e.getKey());
 
                 // Parameters and return type must match
-                if (!aTable.returnType.sameType(bTable.returnType)
+                if (!bTable.returnType.isAssignable(aTable.returnType)
                     || aTable.params.size() != bTable.params.size()) {
                     System.err.println("Method " + e.getKey() + " is not a valid override "
                         + "in class " + sub.name);
@@ -195,9 +198,11 @@ public class MiniJava {
                     }
                 }
             } else {
-                sub.methods.put(e.getKey(), e.getValue());
+                e.getValue().vtableIdx = vtableIdx++;
+                merged.put(e.getKey(), e.getValue());
             }
         }
+        sub.methods = merged;
         return exitCode;
     }
 }

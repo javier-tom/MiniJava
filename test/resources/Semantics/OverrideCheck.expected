@@ -2,17 +2,45 @@ class A:
   super: B
   fields:
   method run:
-    params: int, boolean, 
+    params: int, int, 
     returns: int
+    locals:
+  method bad:
+    params: 
+    returns: D
+    locals:
+  method good:
+    params: 
+    returns: D
     locals:
 
 class B:
   super: null
   fields:
+  method bad:
+    params: 
+    returns: D
+    locals:
   method run:
     params: int, int, 
     returns: int
     locals:
+  method good:
+    params: 
+    returns: D
+    locals:
+
+class C:
+  super: D
+  fields:
+
+class D:
+  super: F
+  fields:
+
+class F:
+  super: null
+  fields:
 
 class Override:
   super: null

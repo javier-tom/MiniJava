@@ -24,10 +24,30 @@ class A extends B {
     public int run(int x, boolean b) {
         return 2;
     }
+
+    public C good() {
+        return new C();
+    }
+
+    public F bad() {
+        return new F();
+    }
 }
 
 class B {
     public int run(int x, int b) {
         return 1;
     }
+
+    public D good() {
+        return new D();
+    }
+
+    public D bad() {
+        return new D();
+    }
 }
+
+class C extends D {}
+class D extends F {}
+class F {}
