@@ -1,0 +1,29 @@
+We implemented the code generation for the compiler mostly as recommended in the
+section slides. Between code blocks, we only used the stack and %rax. Within
+visitors for each code construct, we used additional registers where it made
+sense. For example, we made use of %rdi, %rcx, and %rdx as well in our generator
+for the ArrayAssign AST node.
+
+We made some small improvements on the generated assembly in some blocks from
+what was presented in lecture, but we did not introduce any optimizing passes or
+anything like that. We stored all booleans as either 0 or 1, which made logic
+operations on them quite simple. For example, to compute the inverse of a bool,
+we just used the xor operation.
+
+For the previous parts of the project, we had to make some adjustments to the
+type checker and inheritance cycle detector based off of feedback on Semantics.
+We also added calculations for where methods, fields, and local variables get
+stored in memory to the symbol table pass, so all that information could be
+accessible during Codegen.
+
+The most difficult bugs to uncover were off-by-ones in the memory location code,
+as well as a forgotten this.e.accept() call in one of the visitors. Running the
+compiled code in GDB revealed these, but it took some time. The most difficult
+bug to fix involved an incorrect size being allocated for new objects. We ended
+up with overlapping objects, which overwrote each other's fields.
+
+
+Partner collaboration:
+Like for the previous homeworks, we collaborated over Zoom. We pair programmed
+most of the code generator, but divided the test cases between ourselves. This
+worked fairly well.
