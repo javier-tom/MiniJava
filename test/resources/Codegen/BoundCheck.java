@@ -11,6 +11,8 @@ class Array {
         arr = new int[5];
         x = 5;
         System.out.println(arr[x]);
+        x = x - 6;
+        System.out.println(arr[x]);
         return 5;
     }
 }

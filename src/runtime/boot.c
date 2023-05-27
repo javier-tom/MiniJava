@@ -27,7 +27,7 @@ void put(int64_t x) {
 }
 
 void checkBound(int64_t len, int64_t index) {
-    if (index >= len) {
+    if (index >= len || index < 0) {
         fprintf(stderr, "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException:"
         "Index %"PRId64" out of bounds for length %"PRId64"\n", index, len);
         exit(1);
