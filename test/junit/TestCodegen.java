@@ -52,6 +52,17 @@ public class TestCodegen {
         }
     }
 
+    private void executeCodegenTestWithErr(String testCaseName) {
+        try {
+            new MiniJavaTestBuilder()
+                    .testCompiledProgramOutputMatchesJava(
+                            Path.of(TEST_FILES_LOCATION, testCaseName + TEST_FILES_ERROR_EXTENSION)
+                    );
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
     @Test
     public void testSimple() {
         executeCodegenTestCase("Simple");
