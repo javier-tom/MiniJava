@@ -22,6 +22,7 @@ compiled code in GDB revealed these, but it took some time. The most difficult
 bug to fix involved an incorrect size being allocated for new objects. We ended
 up with overlapping objects, which overwrote each other's fields.
 
+We made a small modification to boot.c to test for array bound and handle system exit with error.
 
 Partner collaboration:
 Like for the previous homeworks, we collaborated over Zoom. We pair programmed
