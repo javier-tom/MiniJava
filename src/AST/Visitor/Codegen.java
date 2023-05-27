@@ -278,10 +278,11 @@ public class Codegen implements Visitor {
         n.e1.accept(this);
         push("rax");
         n.e2.accept(this);
-        // do bound check TODO
-        insn("movq (%rsp), %rdi");
+
+        insn("movq -8(%rbp), %rdi");
+        insn("movq "+s+", %rdi");
         insn("movq (%rdi), %rdi");
-        insn("movq  %rax, %rsi");
+        insn("movq  (%rsp), %rsi");
         push("rax");
         align();
         insn("call checkBound");
